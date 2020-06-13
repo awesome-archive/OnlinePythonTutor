@@ -25,42 +25,56 @@ declare var codeopticonSession: string;  // FIX later when porting Codeopticon
 require('./lib/jquery-3.0.0.min.js');
 
 // just punt and use global script dependencies
-require("script!./lib/ace/src-min-noconflict/ace.js");
-require('script!./lib/ace/src-min-noconflict/mode-python.js');
-require('script!./lib/ace/src-min-noconflict/mode-javascript.js');
-require('script!./lib/ace/src-min-noconflict/mode-typescript.js');
-require('script!./lib/ace/src-min-noconflict/mode-c_cpp.js');
-require('script!./lib/ace/src-min-noconflict/mode-java.js');
-require('script!./lib/ace/src-min-noconflict/mode-ruby.js');
+require("script-loader!./lib/ace/src-min-noconflict/ace.js");
+require('script-loader!./lib/ace/src-min-noconflict/mode-python.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-javascript.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-typescript.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-c_cpp.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-java.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-ruby.js');
 
-require('script!./lib/socket.io-client/socket.io.js');
+require('script-loader!./lib/socket.io-client/socket.io.js');
 
 // need to directly import the class for type checking to work
-import {AbstractBaseFrontend, generateUUID, supports_html5_storage} from './opt-frontend-common.ts';
-import {ExecutionVisualizer, assert, htmlspecialchars} from './pytutor.ts';
+import {AbstractBaseFrontend, generateUUID, supports_html5_storage} from './opt-frontend-common';
+import {ExecutionVisualizer, assert, htmlspecialchars} from './pytutor';
 
 require('../css/opt-frontend.css');
 require('../css/opt-testcases.css');
 
+export const allTabsRE = new RegExp('\t', 'g');
 
-const JAVA_BLANK_TEMPLATE = 'public class YourClassNameHere {\n\
-    public static void main(String[] args) {\n\
-\n\
-    }\n\
-}'
 
-const CPP_BLANK_TEMPLATE = 'int main() {\n\
-\n\
-  return 0;\n\
-}'
+const JAVA_BLANK_TEMPLATE = `public class YourClassNameHere {
+    public static void main(String[] args) {
+
+    }
+}`;
+
+const CPP_BLANK_TEMPLATE = `int main() {
+
+  return 0;
+}`;
 
 const CODE_SNAPSHOT_DEBOUNCE_MS = 1000;
 const SUBMIT_UPDATE_HISTORY_INTERVAL_MS = 1000 * 60;
+
+function sanitizeURL(s) {
+  return s.replace(/\(/g, '%28').replace(/\)/g, '%29'); // replace ( with %28 and ) with %29 so that links embed well in Markdown and email clients
+}
 
 
 export class OptFrontend extends AbstractBaseFrontend {
   originFrontendJsFile: string = 'opt-frontend.js';
   pyInputAceEditor = undefined; // Ace editor object that contains the user's code
+
+  // some subclasses use these, so put them in the superclass
+  activateSyntaxErrorSurvey: boolean = true;
+  activateRuntimeErrorSurvey: boolean = true;
+  activateEurekaSurvey: boolean = false; // taken down on 2019-10-19 because i really haven't looked at the data for a long time; see surveys.ts
+
+  demoMode: boolean = false; // if true, then we're giving a live demo, so hide a bunch of excess stuff on page
+  codcastFile: string; // name of a codcast demo file to try to load
 
   preseededCurInstr: number = undefined;
 
@@ -77,7 +91,7 @@ export class OptFrontend extends AbstractBaseFrontend {
 
       var domain = "http://pythontutor.com/"; // for deployment
       var embedUrlStr = $.param.fragment(domain + "iframe-embed.html", myArgs, 2 /* clobber all */);
-      embedUrlStr = embedUrlStr.replace(/\)/g, '%29') // replace ) with %29 so that links embed well in Markdown
+      embedUrlStr = sanitizeURL(embedUrlStr);
       var iframeStr = '<iframe width="800" height="500" frameborder="0" src="' + embedUrlStr + '"> </iframe>';
       $('#embedCodeOutput').val(iframeStr);
     });
@@ -104,10 +118,32 @@ export class OptFrontend extends AbstractBaseFrontend {
     $('#genUrlBtn').bind('click', () => {
       var myArgs = this.getAppState();
       var urlStr = $.param.fragment(window.location.href, myArgs, 2); // 2 means 'override'
-      urlStr = urlStr.replace(/\)/g, '%29') // replace ) with %29 so that links embed well in Markdown
+      urlStr = sanitizeURL(urlStr);
       $('#urlOutput').val(urlStr);
     });
 
+    /* 2019-04-09 took this down since google's URL shortener service shut down :/
+    $('#genUrlShortenedBtn').bind('click', () => {
+      var myArgs = this.getAppState();
+      var urlStr = $.param.fragment(window.location.href, myArgs, 2); // 2 means 'override'
+      urlStr = sanitizeURL(urlStr);
+      // call goo.gl URL shortener
+      //
+      // to test this API from command-line, first disable the IP restriction on API credentials, then run:
+      // curl https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyCIjtNqfABbRilub1a3Ta7-qKF3bS9_p1M -H 'Content-Type: application/json' -d '{"longUrl": "http://www.google.com/"}'
+      $.ajax('https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyCIjtNqfABbRilub1a3Ta7-qKF3bS9_p1M',
+             {type: 'POST',
+             contentType: 'application/json',
+             data: JSON.stringify({longUrl: urlStr}), // encode as a string first! #tricky
+             success: function(dat) {
+               $("#urlOutputShortened").val(dat.id);
+             },
+             error: function() {
+               $("#urlOutputShortened").val("Error in URL shortener :(");
+             }
+             });
+    });
+    */
 
     // first initialize options from HTML LocalStorage. very important
     // that this code runs FIRST so that options get overridden by query
@@ -232,9 +268,24 @@ export class OptFrontend extends AbstractBaseFrontend {
 
     this.initDeltaObj();
     this.pyInputAceEditor.on('change', (e) => {
+      // 2017-11-21: convert all tabs to 4 spaces so that when you paste
+      // in code from somewhere else that contains tabs, instantly
+      // change all those tabs to spaces. note that all uses of 'tab' key
+      // within the Ace editor on this page will result in spaces (i.e.,
+      // "soft tabs")
+      var curVal = this.pyInputGetValue();
+      if (curVal.indexOf('\t') >= 0) {
+        this.pyInputSetValue(curVal.replace(allTabsRE, '    '));
+        console.log("Converted all tabs to spaces");
+      }
+
       $.doTimeout('pyInputAceEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, this.snapshotCodeDiff.bind(this)); // debounce
-      this.clearFrontendError();
-      s.clearAnnotations();
+
+      // starting on 2018-03-14 -- do NOT clear frontend errors and
+      // annotations when you edit the code, since you may still want to
+      // see the old error messages ... commented out these two lines:
+      //this.clearFrontendError();
+      //s.clearAnnotations();
     });
 
     // don't do real-time syntax checks:
@@ -273,7 +324,7 @@ export class OptFrontend extends AbstractBaseFrontend {
         this.pyInputSetValue(CPP_BLANK_TEMPLATE);
       }
     } else {
-      assert(selectorVal === '2' || selectorVal == '3')
+      assert(selectorVal === '2' || selectorVal == '3' || selectorVal == 'py3anaconda')
       mod = 'python';
       tabSize = 4; // PEP8 style standards
     }
@@ -310,7 +361,7 @@ export class OptFrontend extends AbstractBaseFrontend {
   pyInputSetValue(dat) {
     this.pyInputAceEditor.setValue(dat.rtrim() /* kill trailing spaces */,
                                    -1 /* do NOT select after setting text */);
-    $('#urlOutput,#embedCodeOutput').val('');
+    $('#urlOutput,#urlOutputShortened,#embedCodeOutput').val('');
     this.clearFrontendError();
     // also scroll to top to make the UI more usable on smaller monitors
     // TODO: this has a global impact on the document, so breaks modularity?
@@ -328,7 +379,7 @@ export class OptFrontend extends AbstractBaseFrontend {
   executeCodeFromScratch() {
     // don't execute empty string:
     if (this.pyInputAceEditor && $.trim(this.pyInputGetValue()) == '') {
-      this.setFronendError(["Type in some code to visualize."]);
+      this.setFronendError(["Type in some code to visualize."], true);
       return;
     }
     super.executeCodeFromScratch();
@@ -454,6 +505,9 @@ export class OptFrontend extends AbstractBaseFrontend {
   ignoreAjaxError(settings) {
     // other idiosyncratic errors to ignore
     if ((settings.url.indexOf('syntax_err_survey.py') > -1) ||
+        (settings.url.indexOf('runtime_err_survey.py') > -1) ||
+        (settings.url.indexOf('eureka_survey.py') > -1) ||
+        (settings.url.indexOf('error_log.py') > -1) ||
         (settings.url.indexOf('viz_interaction.py') > -1)) {
       return true;
     }
@@ -520,6 +574,10 @@ export class OptFrontend extends AbstractBaseFrontend {
 
       $(document).scrollTop(0); // scroll to top to make UX better on small monitors
 
+      // *after* the editor is shown, force it to refresh its contents
+      // (using the misleadingly-named resize(true) method)
+      this.pyInputAceEditor.resize(true);
+
       var s: any = { mode: 'edit' };
       // keep these persistent so that they survive page reloads
       // keep these persistent so that they survive page reloads
@@ -548,14 +606,21 @@ export class OptFrontend extends AbstractBaseFrontend {
         this.enterEditMode();
       });
       var v = $('#pythonVersionSelector').val();
+
+      // 2018-03-15 - removed "Live programming" link from
+      // visualization mode to simplify the UI, even if it drives
+      // fewer people to live programming mode; they can always click
+      // the "Live Programming Mode" button in the code editor:
+      /*
       if (v === 'js' || v === '2' || v === '3') {
         var myArgs = this.getAppState();
-        var urlStr = $.param.fragment('live.html', myArgs, 2 /* clobber all */);
+        var urlStr = $.param.fragment('live.html', myArgs, 2); // clobber all
         $("#pyOutputPane #liveModeSpan").show();
         $('#pyOutputPane #editLiveModeBtn').off().click(this.openLiveModeUrl.bind(this));
       } else {
         $("#pyOutputPane #liveModeSpan").hide();
       }
+      */
 
       $(document).scrollTop(0); // scroll to top to make UX better on small monitors
 
@@ -568,7 +633,7 @@ export class OptFrontend extends AbstractBaseFrontend {
       assert(false);
     }
 
-    $('#urlOutput,#embedCodeOutput').val(''); // clear to avoid stale values
+    $('#urlOutput,#urlOutputShortened,#embedCodeOutput').val(''); // clear to avoid stale values
 
     // log at the end after appMode gets canonicalized
     this.logEventCodeopticon({type: 'updateAppDisplay', mode: this.appMode, appState: this.getAppState()});
@@ -644,6 +709,9 @@ export class OptFrontend extends AbstractBaseFrontend {
     }
   }
 
+  demoModeChanged() {}; // NOP; subclasses need to override
+  loadCodcastFile() {}; // NOP; subclasses need to override
+
   parseQueryString() {
     var queryStrOptions = this.getQueryStringOptions();
     this.setToggleOptions(queryStrOptions);
@@ -655,6 +723,16 @@ export class OptFrontend extends AbstractBaseFrontend {
     this.preseededCurInstr = queryStrOptions.preseededCurInstr;
     if (isNaN(this.preseededCurInstr)) {
       this.preseededCurInstr = undefined;
+    }
+
+    if (queryStrOptions.demoMode) {
+      this.demoMode = true;
+      this.demoModeChanged();
+    }
+
+    if (queryStrOptions.codcastFile) {
+      this.codcastFile = queryStrOptions.codcastFile;
+      this.loadCodcastFile();
     }
 
     if (queryStrOptions.codeopticonSession) {

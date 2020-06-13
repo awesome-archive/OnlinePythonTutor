@@ -4,9 +4,9 @@
 
 // customized version of opt-frontend.js for ../composingprograms.html
 
-import {OptFrontendSharedSessions} from './opt-shared-sessions.ts';
-import {assert,htmlspecialchars} from './pytutor.ts';
-import {footerHtml} from './footer-html.ts';
+import {OptFrontendSharedSessions} from './opt-shared-sessions';
+import {assert,htmlspecialchars} from './pytutor';
+import {footerHtml} from './footer-html';
 
 export class OptFrontendComposingprograms extends OptFrontendSharedSessions {
   constructor(params={}) {
@@ -27,11 +27,12 @@ export class OptFrontendComposingprograms extends OptFrontendSharedSessions {
     var ret = { compactFuncLabels: true,
                 showAllFrameLabels: true,
 
-                disableHeapNesting: false,
+                alwaysNestTypes: [],
+                disableHeapNesting: true,
                 textualMemoryLabels: false,
 
                 executeCodeWithRawInputFunc: this.executeCodeWithRawInput.bind(this),
-                updateOutputCallback: function() {$('#urlOutput,#embedCodeOutput').val('');},
+                updateOutputCallback: function() {$('#urlOutput,#urlOutputShortened,#embedCodeOutput').val('');},
                 startingInstruction: 0,
 
                 // always use the same visualizer ID for all

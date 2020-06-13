@@ -1,7 +1,7 @@
 # Online Python Tutor
 # https://github.com/pgbovine/OnlinePythonTutor/
 #
-# Copyright (C) Philip J. Guo (philip@pgbovine.net)
+# Copyright (C) Philip Guo (http://pgbovine.net/)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the
@@ -23,6 +23,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Thanks to John DeNero for making the encoder work on both Python 2 and 3
+# (circa 2012-2013)
 
 
 # Given an arbitrary piece of Python data, encode it in such a manner
@@ -48,15 +49,22 @@
 #
 #   (for SPECIAL_FLOAT values, <value> is a list like ['SPECIAL_FLOAT', 'Infinity'])
 #
+#   added on 2018-06-13:
+#   ['IMPORTED_FAUX_PRIMITIVE', <label>] - renders externally imported objects
+#                                          like they were primitives, to save
+#                                          space and to prevent from having to
+#                                          recurse into of them to see internals
+#
 #   Compound objects:
 #   * list     - ['LIST', elt1, elt2, elt3, ..., eltN]
 #   * tuple    - ['TUPLE', elt1, elt2, elt3, ..., eltN]
 #   * set      - ['SET', elt1, elt2, elt3, ..., eltN]
 #   * dict     - ['DICT', [key1, value1], [key2, value2], ..., [keyN, valueN]]
 #   * instance - ['INSTANCE', class name, [attr1, value1], [attr2, value2], ..., [attrN, valueN]]
-#   * instance with __str__ defined - ['INSTANCE_PPRINT', class name, <__str__ value>]
+#   * instance with non-trivial __str__ defined - ['INSTANCE_PPRINT', class name, <__str__ value>, [attr1, value1], [attr2, value2], ..., [attrN, valueN]]
 #   * class    - ['CLASS', class name, [list of superclass names], [attr1, value1], [attr2, value2], ..., [attrN, valueN]]
-#   * function - ['FUNCTION', function name, parent frame ID (for nested functions)]
+#   * function - ['FUNCTION', function name, parent frame ID (for nested functions),
+#                 [*OPTIONAL* list of pairs of default argument names/values] ] <-- final optional element added on 2018-06-13
 #   * module   - ['module', module name]
 #   * other    - [<type name>, string representation of object]
 #   * compound object reference - ['REF', target object's unique_id]
@@ -161,12 +169,14 @@ def create_lambda_line_number(codeobj, line_to_lambda_code):
 # to every reference ever created by the program without ever releasing
 # anything!
 class ObjectEncoder:
-  def __init__(self, render_heap_primitives):
+  def __init__(self, parent):
+    self.parent = parent # should be a PGLogger object
+
     # Key: canonicalized small ID
     # Value: encoded (compound) heap object
     self.encoded_heap_objects = {}
 
-    self.render_heap_primitives = render_heap_primitives
+    self.render_heap_primitives = parent.render_heap_primitives
 
     self.id_to_small_IDs = {}
     self.cur_small_ID = 1
@@ -185,6 +195,56 @@ class ObjectEncoder:
     # Value: list of the code objects of lambdas defined
     #        on that line in the order they were defined
     self.line_to_lambda_code = defaultdict(list)
+
+  def should_hide_var(self, var):
+    return self.parent.should_hide_var(var)
+
+  # searches through self.parents.types_to_inline and tries
+  # to match the type returned by type(obj).__name__ and
+  # also 'class' and 'instance' for classes and instances, respectively
+  def should_inline_object_by_type(self, obj):
+    # fast-pass optimization -- common case
+    if not self.parent.types_to_inline:
+      return False
+
+    # copy-pasted from the end of self.encode()
+    typ = type(obj)
+    typename = typ.__name__
+
+    # pick up built-in functions too:
+    if typ in (types.FunctionType, types.MethodType, types.BuiltinFunctionType, types.BuiltinMethodType):
+        typename = 'function'
+
+    if not typename:
+        return False
+
+    alt_typename = None
+    if is_class(obj):
+        alt_typename = 'class'
+    elif is_instance(obj) and typename != 'function':
+        # if obj is an instance of the Fooo class, then we want to match
+        # on both 'instance' and 'Fooo'
+        # (exception: 'function' objects are sometimes also instances,
+        #  but we still want to call them 'function', so ignore them)
+        typename = 'instance'
+        class_name = None
+        if hasattr(obj, '__class__'):
+            # common case ...
+            class_name = get_name(obj.__class__)
+        else:
+            # super special case for something like
+            # "from datetime import datetime_CAPI" in Python 3.2,
+            # which is some weird 'PyCapsule' type ...
+            # http://docs.python.org/release/3.1.5/c-api/capsule.html
+            class_name = get_name(type(obj))
+        alt_typename = class_name
+
+    for re_match in self.parent.types_to_inline:
+        if re_match(typename):
+            return True
+        if alt_typename and re_match(alt_typename):
+            return True
+    return False
 
 
   def get_heap(self):
@@ -213,7 +273,86 @@ class ObjectEncoder:
       return encode_primitive(dat)
     # compound type - return an object reference and update encoded_heap_objects
     else:
+      # IMPORTED_FAUX_PRIMITIVE feature added on 2018-06-13:
+      is_externally_defined = False # is dat defined in external (i.e., non-user) code?
+      try:
+        # some objects don't return anything for getsourcefile() but DO return
+        # something legit for getmodule(). e.g., "from io import StringIO"
+        # so TRY getmodule *first* and then fall back on getsourcefile
+        # since getmodule seems more robust empirically ...
+        gsf = inspect.getmodule(dat).__file__
+        if not gsf:
+            gsf = inspect.getsourcefile(dat)
+
+        # a hacky heuristic is that if gsf is an absolute path, then it's likely
+        # to be some library function and *not* in user-defined code
+        #
+        # NB: don't use os.path.isabs() since it doesn't work on some
+        # python installations (e.g., on my webserver) and also adds a
+        # dependency on the os module. just do a simple check:
+        #
+        # hacky: do other checks for strings that are indicative of files
+        # that load user-written code, like 'generate_json_trace.py'
+        if gsf and gsf[0] == '/' and 'generate_json_trace.py' not in gsf:
+            is_externally_defined = True
+      except (AttributeError, TypeError):
+        pass # fail soft
       my_id = id(dat)
+
+      # if dat is an *real* object instance (and not some special built-in one
+      # like ABCMeta, or a py3 function object), then DON'T treat it as
+      # externally-defined because a user might be instantiating an *instance*
+      # of an imported class in their own code, so we want to show that instance
+      # in da visualization - ugh #hacky
+      if (is_instance(dat) and
+          type(dat) not in (types.FunctionType, types.MethodType, types.BuiltinFunctionType, types.BuiltinMethodType) and
+          hasattr(dat, '__class__') and (get_name(dat.__class__) != 'ABCMeta')):
+        is_externally_defined = False
+
+      # if this is an externally-defined object (i.e., from an imported
+      # module, don't try to recurse into it since we don't want to see
+      # the internals of imported objects; just return an
+      # IMPORTED_FAUX_PRIMITIVE object and continue along on our way
+      if is_externally_defined:
+        label = 'object'
+        try:
+            label = type(dat).__name__
+            if is_class(dat):
+                label = 'class'
+            elif is_instance(dat):
+                label = 'object'
+        except:
+            pass
+        return ['IMPORTED_FAUX_PRIMITIVE', 'imported ' + label] # punt early!
+
+      # next check whether it should be inlined
+      if self.should_inline_object_by_type(dat):
+        label = 'object'
+        try:
+            label = type(dat).__name__
+            if is_class(dat):
+                class_name = get_name(dat)
+                label = class_name + ' class'
+            elif is_instance(dat):
+                # a lot of copy-pasta from other parts of this file:
+                # TODO: clean up
+                class_name = None
+                if hasattr(dat, '__class__'):
+                    # common case ...
+                    class_name = get_name(dat.__class__)
+                else:
+                    # super special case for something like
+                    # "from datetime import datetime_CAPI" in Python 3.2,
+                    # which is some weird 'PyCapsule' type ...
+                    # http://docs.python.org/release/3.1.5/c-api/capsule.html
+                    class_name = get_name(type(dat))
+                if class_name:
+                    label = class_name + ' instance'
+                else:
+                    label = 'instance'
+        except:
+            pass
+        return ['IMPORTED_FAUX_PRIMITIVE', label + ' (hidden)'] # punt early!
 
       try:
         my_small_id = self.id_to_small_IDs[my_id]
@@ -262,14 +401,30 @@ class ObjectEncoder:
           argspec = inspect.getargspec(dat)
 
         printed_args = [e for e in argspec.args]
+
+        default_arg_names_and_vals = []
+        if argspec.defaults:
+            num_missing_defaults = len(printed_args) - len(argspec.defaults)
+            assert num_missing_defaults >= 0
+            # tricky tricky tricky how default positional arguments work!
+            for i in range(num_missing_defaults, len(printed_args)):
+                default_arg_names_and_vals.append((printed_args[i], self.encode(argspec.defaults[i-num_missing_defaults], get_parent)))
+
         if argspec.varargs:
           printed_args.append('*' + argspec.varargs)
 
         if is_python3:
-          if argspec.varkw:
-            printed_args.append('**' + argspec.varkw)
+          # kwonlyargs come before varkw
           if argspec.kwonlyargs:
             printed_args.extend(argspec.kwonlyargs)
+            if argspec.kwonlydefaults:
+              # iterate in order of appearance in kwonlyargs
+              for varname in argspec.kwonlyargs:
+                if varname in argspec.kwonlydefaults:
+                  val = argspec.kwonlydefaults[varname]
+                  default_arg_names_and_vals.append((varname, self.encode(val, get_parent)))
+          if argspec.varkw:
+            printed_args.append('**' + argspec.varkw)
         else:
           if argspec.keywords:
             printed_args.append('**' + argspec.keywords)
@@ -300,6 +455,10 @@ class ObjectEncoder:
           enclosing_frame_id = get_parent(dat)
           encoded_val[2] = enclosing_frame_id
         new_obj.extend(encoded_val)
+        # OPTIONAL!!!
+        if default_arg_names_and_vals:
+            new_obj.append(default_arg_names_and_vals) # *append* it as a single list element
+
       elif typ is types.BuiltinFunctionType:
         pretty_name = get_name(dat) + '(...)'
         new_obj.extend(['FUNCTION', pretty_name, None])
@@ -343,22 +502,30 @@ class ObjectEncoder:
         # http://docs.python.org/release/3.1.5/c-api/capsule.html
         class_name = get_name(type(dat))
 
-      if hasattr(dat, '__str__') and \
-         (not dat.__class__.__str__ is object.__str__): # make sure it's not the lame default __str__
-        # N.B.: when objects are being constructed, this call
-        # might fail since not all fields have yet been populated
+      pprint_str = None
+      # do you or any of your superclasses have a __str__ field? if so, pretty-print yourself!
+      if hasattr(dat, '__str__'):
         try:
-          pprint_str = str(dat)
-        except:
-          pprint_str = '<incomplete object>'
+          pprint_str = dat.__str__()
 
+          # sometimes you'll get 'trivial' pprint_str like: '<__main__.MyObj object at 0x10f465cd0>'
+          # or '<module 'collections' ...'
+          # IGNORE THOSE!!!
+          if pprint_str[0] == '<' and pprint_str[-1] == '>' and (' at ' in pprint_str or pprint_str.startswith('<module')):
+            pprint_str = None
+        except:
+          pass
+
+      # TODO: filter for trivial-looking pprint_str like those produced
+      # by object.__str__
+      if pprint_str:
         new_obj.extend(['INSTANCE_PPRINT', class_name, pprint_str])
-        return # bail early
       else:
         new_obj.extend(['INSTANCE', class_name])
-        # don't traverse inside modules, or else risk EXPLODING the visualization
-        if class_name == 'module':
-          return
+
+      # don't traverse inside modules, or else risk EXPLODING the visualization
+      if class_name == 'module':
+        return
     else:
       superclass_names = [e.__name__ for e in dat.__bases__ if e is not object]
       new_obj.extend(['CLASS', get_name(dat), superclass_names])
@@ -373,5 +540,6 @@ class ObjectEncoder:
       user_attrs = []
 
     for attr in user_attrs:
-      new_obj.append([self.encode(attr, None), self.encode(dat.__dict__[attr], None)])
+      if not self.should_hide_var(attr):
+        new_obj.append([self.encode(attr, None), self.encode(dat.__dict__[attr], None)])
 

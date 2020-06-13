@@ -37,6 +37,12 @@ span {
   padding: 0px;
 }
 
+#optionsPane {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  line-height: 150%;
+}
+
 table#pyOutputPane {
   padding: 10px;
 }
@@ -81,6 +87,12 @@ button.surveyBtn {
   margin-top: 8px;
 }
 
+button.surveyBtnBig {
+  font-size: 11pt;
+  padding: 5px;
+  margin-top: 0px;
+}
+
 #footer {
   color: #999;
   font-size: 9pt;
@@ -102,15 +114,56 @@ button.surveyBtn {
 }
 
 .togetherjsBtn {
-  color: #b80000;
+  /*color: #b80000;*/
+  color: #e93f34;
   font-size: 9pt;
   padding: 4px;
   margin-top: 3px;
 }
 
+/* make this a fixed size with scrollbars for overflow so that the UI doesn't jitter up and down */
+#publicHelpQueue {
+  overflow: auto;
+  height: 95px;
+  margin-bottom: 15px;
+  margin-left: 10px;
+}
+
+.helpQueueSmallText {
+  color: #777;
+  font-size: 8pt;
+}
+
+.redBold {
+  font-weight: bold;
+  color: #e93f34;
+}
+
+#stopRequestHelpBtn {
+  font-size: 9pt;
+  padding: 2px;
+}
+
+#moderationPanel {
+  font-size: 11pt;
+  margin-bottom: 5pt;
+  min-height: 16pt; /* just so things don't jiggle around vertically too much */
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  border: 1px solid #e93f34;
+}
+
+.kickLink {
+  font-size: 10pt;
+  margin-right: 4px;
+}
+
+
 #syncBtn {
  font-size: 8pt;
- margin-left: 3px;
+ margin-left: 0px;
 }
 
 #experimentalHeader {
@@ -184,7 +237,7 @@ button.surveyBtn {
 
 
 #syntaxErrBubbleContents {
-  font-size: 9pt;
+  font-size: 9.5pt;
   cursor: default;
 }
 
@@ -223,10 +276,21 @@ button.surveyBtn {
 
 #testCasesPane {
  margin-top: 5px;
- padding-bottom: 10px;
- border-bottom: 1px solid #ccc;
+ margin-bottom: 25px;
 }
 
+#exampleSnippets {
+ border-top: 1px solid #ccc;
+ margin-top: 15px;
+}
+
+#showExampleLink {
+  margin-top: 15px;
+}
+
+#instructionsPane {
+ margin-bottom: 10px;
+}
 
 /* for SyntaxErrorSurveyBubble */
 
@@ -240,8 +304,8 @@ textarea.bubbleInputText {
 	color: #333;
 	background-color: #ffffff;
 
-	max-width: 350px;
-	width: 350px;
+	max-width: 390px;
+	width: 390px;
 
 	border: 2px solid #e93f34;
 

@@ -1,7 +1,7 @@
 # Online Python Tutor
 # https://github.com/pgbovine/OnlinePythonTutor/
 #
-# Copyright (C) Philip J. Guo (philip@pgbovine.net)
+# Copyright (C) Philip Guo (http://pgbovine.net/)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the
@@ -28,8 +28,10 @@
 # Python debugger imported via the bdb module), printing out the values
 # of all in-scope data structures after each executed instruction.
 
+# NB: try to import the minimal amount of stuff in this module to lessen
+# the security attack surface
 
-
+import imp
 import sys
 import bdb # the KEY import here!
 import re
@@ -48,8 +50,6 @@ else:
 import pg_encoder
 
 
-# TODO: not threadsafe:
-
 # upper-bound on the number of executed lines, in order to guard against
 # infinite loops
 #MAX_EXECUTED_LINES = 300
@@ -60,7 +60,75 @@ DEBUG = True
 
 BREAKPOINT_STR = '#break'
 
+# if a line starts with this string, then look for a comma-separated
+# list of variables after the colon. *hide* those variables in da trace
+#
+# 2018-06-17:
+# - now supports unix-style shell globs using the syntax in
+#   https://docs.python.org/3/library/fnmatch.html so you can write things
+#   like '#pythontutor_hide: _*' to hide all private instance variables
+# - also now filters class and instance fields in addition to top-level vars
+PYTUTOR_HIDE_STR = '#pythontutor_hide:'
+# 2018-06-17: a comma-separated list of types that should be displayed *inline*
+# like primitives, with their actual values HIDDEN to save space. for details
+# of what types are legal to specify, see:
+# pg_encoder.py:should_inline_object_by_type()
+# - also accepts shell globs, just like PYTUTOR_HIDE_STR
+PYTUTOR_INLINE_TYPE_STR = '#pythontutor_hide_type:'
+
 CLASS_RE = re.compile('class\s+')
+
+# copied-pasted from translate() in https://github.com/python/cpython/blob/2.7/Lib/fnmatch.py
+def globToRegex(pat):
+    """Translate a shell PATTERN to a regular expression.
+    There is no way to quote meta-characters.
+    """
+
+    i, n = 0, len(pat)
+    res = ''
+    while i < n:
+        c = pat[i]
+        i = i+1
+        if c == '*':
+            res = res + '.*'
+        elif c == '?':
+            res = res + '.'
+        elif c == '[':
+            j = i
+            if j < n and pat[j] == '!':
+                j = j+1
+            if j < n and pat[j] == ']':
+                j = j+1
+            while j < n and pat[j] != ']':
+                j = j+1
+            if j >= n:
+                res = res + '\\['
+            else:
+                stuff = pat[i:j].replace('\\','\\\\')
+                i = j+1
+                if stuff[0] == '!':
+                    stuff = '^' + stuff[1:]
+                elif stuff[0] == '^':
+                    stuff = '\\' + stuff
+                res = '%s[%s]' % (res, stuff)
+        else:
+            res = res + re.escape(c)
+    return res + '\Z(?ms)'
+
+def compileGlobMatch(pattern):
+    # very important to use match and *not* search!
+    return re.compile(globToRegex(pattern)).match
+
+# test globToRegex and compileGlobMatch
+'''
+for e in ('_*', '__*', '__*__', '*_$'):
+    stuff = compileGlobMatch(e)
+    for s in ('_test', 'test_', '_test_', '__test', '__test__'):
+        print(e, s, stuff(s) is not None)
+'''
+
+
+TRY_ANACONDA_STR = '\n\nYou can also try "Python 3.6 with Anaconda (experimental)",\nwhich is slower but lets you import many more modules.\n'
 
 
 # simple sandboxing scheme:
@@ -85,24 +153,6 @@ class NullDevice():
         pass
 
 
-# These could lead to XSS or other code injection attacks, so be careful:
-# these are now deprecated as of 2016-06-28
-__html__ = None
-def setHTML(htmlStr):
-  global __html__
-  __html__ = htmlStr
-
-__css__ = None
-def setCSS(cssStr):
-  global __css__
-  __css__ = cssStr
-
-__js__ = None
-def setJS(jsStr):
-  global __js__
-  __js__ = jsStr
-
-
 # ugh, I can't figure out why in Python 2, __builtins__ seems to
 # be a dict, but in Python 3, __builtins__ seems to be a module,
 # so just handle both cases ... UGLY!
@@ -117,40 +167,26 @@ else:
 ALLOWED_STDLIB_MODULE_IMPORTS = ('math', 'random', 'time', 'datetime',
                           'functools', 'itertools', 'operator', 'string',
                           'collections', 're', 'json',
-                          'heapq', 'bisect', 'copy', 'hashlib')
+                          'heapq', 'bisect', 'copy', 'hashlib', 'typing',
+                          # the above modules were first added in 2012-09
+                          # and then incrementally appended to up until
+                          # 2016-ish (see git blame logs)
+
+                          # added these additional ones on 2018-06-15
+                          # after seeing usage logs of what users tried
+                          # importing a lot but we didn't support yet
+                          # (ignoring imports that heavily deal with
+                          # filesystem, networking, or 3rd-party libs)
+                          '__future__', 'cmath', 'decimal', 'fractions',
+                          'pprint', 'calendar', 'pickle',
+                          'types', 'array',
+                          'locale', 'abc',
+                          'doctest', 'unittest',
+                          )
 
 # allow users to import but don't explicitly import it since it's
 # already been done above
 OTHER_STDLIB_WHITELIST = ('StringIO', 'io')
-
-# whitelist of custom modules to import into OPT
-# (TODO: support modules in a subdirectory, but there are various
-# logistical problems with doing so that I can't overcome at the moment,
-# especially getting setHTML, setCSS, and setJS to work in the imported
-# modules.)
-CUSTOM_MODULE_IMPORTS = () # ignore these for now
-#                        ('callback_module',
-#                         'ttt_module',
-#                         'html_module',
-#                         'htmlexample_module',
-# ignore these troublesome imports for now
-#                         'watch_module',   # 'import sys' might be troublesome
-#                         'bintree_module',
-#                         'GChartWrapper',
-#                         'matrix',
-#                         'htmlFrame')
-
-
-# PREEMPTIVELY import all of these modules, so that when the user's
-# script imports them, it won't try to do a file read (since they've
-# already been imported and cached in memory). Remember that when
-# the user's code runs, resource.setrlimit(resource.RLIMIT_NOFILE, (0, 0))
-# will already be in effect, so no more files can be opened.
-#
-# NB: All modules in CUSTOM_MODULE_IMPORTS will be imported, warts and
-# all, so they better work on Python 2 and 3!
-for m in ALLOWED_STDLIB_MODULE_IMPORTS + CUSTOM_MODULE_IMPORTS:
-  __import__(m)
 
 
 # Restrict imports to a whitelist
@@ -159,25 +195,40 @@ def __restricted_import__(*args):
   # subclass str and bypass the 'in' test on the next line
   args = [e for e in args if type(e) is str]
 
-  if args[0] in ALLOWED_STDLIB_MODULE_IMPORTS + CUSTOM_MODULE_IMPORTS + OTHER_STDLIB_WHITELIST:
+  all_allowed_imports = sorted(ALLOWED_STDLIB_MODULE_IMPORTS + OTHER_STDLIB_WHITELIST)
+  if is_python3:
+    all_allowed_imports.remove('StringIO')
+  else:
+    all_allowed_imports.remove('typing')
+
+  if args[0] in all_allowed_imports:
     imported_mod = BUILTIN_IMPORT(*args)
-
-    if args[0] in CUSTOM_MODULE_IMPORTS:
-      # add special magical functions to custom imported modules
-      setattr(imported_mod, 'setHTML', setHTML)
-      setattr(imported_mod, 'setCSS', setCSS)
-      setattr(imported_mod, 'setJS', setJS)
-
     # somewhat weak protection against imported modules that contain one
     # of these troublesome builtins. again, NOTHING is foolproof ...
     # just more defense in depth :)
+    #
+    # unload it so that if someone attempts to reload it, then it has to be
+    # loaded from the filesystem, which is (supposedly!) blocked by setrlimit
     for mod in ('os', 'sys', 'posix', 'gc'):
       if hasattr(imported_mod, mod):
         delattr(imported_mod, mod)
 
     return imported_mod
   else:
-    raise ImportError('{0} not supported'.format(args[0]))
+    # original error message ...
+    #raise ImportError('{0} not supported'.format(args[0]))
+
+    # 2017-12-06: added a better error message to tell the user what
+    # modules *can* be imported in python tutor ...
+    ENTRIES_PER_LINE = 6
+
+    lines_to_print = []
+    # adapted from https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks
+    for i in range(0, len(all_allowed_imports), ENTRIES_PER_LINE):
+        lines_to_print.append(all_allowed_imports[i:i + ENTRIES_PER_LINE])
+    pretty_printed_imports = ',\n  '.join([', '.join(e) for e in lines_to_print])
+
+    raise ImportError('{0} not found or not supported\nOnly these modules can be imported:\n  {1}{2}'.format(args[0], pretty_printed_imports, TRY_ANACONDA_STR))
 
 
 # Support interactive user input by:
@@ -203,16 +254,16 @@ def open_wrapper(*args):
   if is_python3:
       raise Exception('''open() is not supported by Python Tutor.
 Instead use io.StringIO() to simulate a file.
-Here is an example: http://goo.gl/uNvBGl''')
+Example: http://goo.gl/uNvBGl''' + TRY_ANACONDA_STR)
   else:
       raise Exception('''open() is not supported by Python Tutor.
 Instead use StringIO.StringIO() to simulate a file.
-Here is an example: http://goo.gl/Q9xQ4p''')
+Example: http://goo.gl/Q9xQ4p''' + TRY_ANACONDA_STR)
 
 # create a more sensible error message for unsupported features
 def create_banned_builtins_wrapper(fn_name):
   def err_func(*args):
-    raise Exception("'" + fn_name + "' is not supported by Python Tutor.")
+    raise Exception("'" + fn_name + "' is not supported by Python Tutor." + TRY_ANACONDA_STR)
   return err_func
 
 
@@ -252,31 +303,18 @@ def mouse_input_wrapper(prompt=''):
   raise MouseInputException(prompt)
 
 
-
 # blacklist of builtins
-BANNED_BUILTINS = ['reload', 'open', 'compile',
-                   'file', 'eval', 'exec', 'execfile',
-                   'exit', 'quit', 'help',
-                   'dir', 'globals', 'locals', 'vars']
+BANNED_BUILTINS = [] # 2018-06-15 don't ban any builtins since that's just security by obscurity
+                     # we should rely on other layered security mechanisms
+
+# old banned built-ins prior to 2018-06-15
+#BANNED_BUILTINS = ['reload', 'open', 'compile',
+#                   'file', 'eval', 'exec', 'execfile',
+#                   'exit', 'quit', 'help',
+#                   'dir', 'globals', 'locals', 'vars']
 # Peter says 'apply' isn't dangerous, so don't ban it
 
-IGNORE_VARS = set(('__user_stdout__', '__OPT_toplevel__', '__builtins__', '__name__', '__exception__', '__doc__', '__package__'))
-
-def get_user_stdout(frame):
-  my_user_stdout = frame.f_globals['__user_stdout__']
-
-  # This is SUPER KRAZY! In Python 2, the buflist inside of a StringIO
-  # instance can be made up of both str and unicode, so we need to convert
-  # the str to unicode and replace invalid characters with the Unicode '?'
-  # But leave unicode elements alone. This way, EVERYTHING inside buflist
-  # will be unicode. (Note that in Python 3, everything is already unicode,
-  # so we're fine.)
-  if not is_python3:
-    my_user_stdout.buflist = [(e.decode('utf-8', 'replace')
-                               if type(e) is str
-                               else e)
-                              for e in my_user_stdout.buflist]
-  return my_user_stdout.getvalue()
+IGNORE_VARS = set(('__builtins__', '__name__', '__exception__', '__doc__', '__package__'))
 
 
 '''
@@ -294,6 +332,7 @@ list/set/dict comprehensions as they're being built. e.g., try:
 Note that on pythontutor.com, I am currently running custom-compiled
 versions of Python-2.7.6 and Python-3.3.3 with this f_valuestack hack.
 Unless you run your own custom CPython, you won't get these benefits.
+- update as of 2018-06-16: I don't think the above has been true for a while
 
 
 Patch:
@@ -450,14 +489,46 @@ def visit_function_obj(v, ids_seen_set):
 
 
 class PGLogger(bdb.Bdb):
-
+    # if custom_modules is non-empty, it should be a dict mapping module
+    # names to the python source code of each module. when _runscript is
+    # called, it will do "from <module> import *" for all modules in
+    # custom_modules before running the user's script and then trace all
+    # code within custom_modules
+    #
+    # if separate_stdout_by_module, then have a separate stdout stream
+    # for each module rather than all stdout going to a single stream
     def __init__(self, cumulative_mode, heap_primitives, show_only_outputs, finalizer_func,
-                 disable_security_checks=False, crazy_mode=False):
+                 disable_security_checks=False, allow_all_modules=False, crazy_mode=False,
+                 custom_modules=None, separate_stdout_by_module=False, probe_exprs=None):
         bdb.Bdb.__init__(self)
         self.mainpyfile = ''
         self._wait_for_mainpyfile = 0
 
+        if probe_exprs:
+            self.probe_exprs = probe_exprs
+        else:
+            self.probe_exprs = None
+
+        self.separate_stdout_by_module = separate_stdout_by_module
+        self.stdout_by_module = {} # Key: module name, Value: StringIO faux-stdout
+
+        self.modules_to_trace = set(['__main__']) # always trace __main__!
+
+        # Key: module name
+        # Value: module's python code as a string
+        self.custom_modules = custom_modules
+        if self.custom_modules:
+            for module_name in self.custom_modules:
+                self.modules_to_trace.add(module_name)
+
         self.disable_security_checks = disable_security_checks
+        self.allow_all_modules = allow_all_modules
+        # if we allow all modules, we shouldn't do security checks
+        # either since otherwise users can't really import anything
+        # because that will likely involve opening files on disk, which
+        # is disallowed by security checks
+        if self.allow_all_modules:
+            self.disable_security_checks = True
 
         # if True, then displays ALL stack frames that have ever existed
         # rather than only those currently on the stack (and their
@@ -527,7 +598,7 @@ class PGLogger(bdb.Bdb):
 
         # very important for this single object to persist throughout
         # execution, or else canonical small IDs won't be consistent.
-        self.encoder = pg_encoder.ObjectEncoder(self.render_heap_primitives)
+        self.encoder = pg_encoder.ObjectEncoder(self)
 
         self.executed_script = None # Python script to be executed!
 
@@ -536,7 +607,44 @@ class PGLogger(bdb.Bdb):
         # ONLY at breakpoint lines.
         self.breakpoints = []
 
+        self.vars_to_hide = set() # a set of regex match objects
+                                  # created by compileGlobMatch() from
+                                  # the contents of PYTUTOR_HIDE_STR
+        self.types_to_inline = set() # a set of regex match objects derived from PYTUTOR_INLINE_TYPE_STR
+
         self.prev_lineno = -1 # keep track of previous line just executed
+
+
+    def should_hide_var(self, var):
+        for re_match in self.vars_to_hide:
+            if re_match(var):
+                return True
+        return False
+
+
+    def get_user_stdout(self):
+        def encode_stringio(sio):
+            # This is SUPER KRAZY! In Python 2, the buflist inside of a StringIO
+            # instance can be made up of both str and unicode, so we need to convert
+            # the str to unicode and replace invalid characters with the Unicode '?'
+            # But leave unicode elements alone. This way, EVERYTHING inside buflist
+            # will be unicode. (Note that in Python 3, everything is already unicode,
+            # so we're fine.)
+            if not is_python3:
+                sio.buflist = [(e.decode('utf-8', 'replace')
+                                           if type(e) is str
+                                           else e)
+                                          for e in sio.buflist]
+            return sio.getvalue()
+
+        if self.separate_stdout_by_module:
+            ret = {}
+            for module_name in self.stdout_by_module:
+                ret[module_name] = encode_stringio(self.stdout_by_module[module_name])
+            return ret
+        else:
+            # common case - single stdout stream
+            return encode_stringio(self.user_stdout)
 
 
     def get_frame_id(self, cur_frame):
@@ -650,8 +758,11 @@ class PGLogger(bdb.Bdb):
         if self.done: return
 
         if self._wait_for_mainpyfile:
-            if (self.canonic(frame.f_code.co_filename) != "<string>" or
+            if ((frame.f_globals['__name__'] not in self.modules_to_trace) or
                 frame.f_lineno <= 0):
+            # older code:
+            #if (self.canonic(frame.f_code.co_filename) != "<string>" or
+            #    frame.f_lineno <= 0):
                 return
             self._wait_for_mainpyfile = 0
         self.interaction(frame, None, 'step_line')
@@ -696,6 +807,7 @@ class PGLogger(bdb.Bdb):
         top_frame = tos[0]
         lineno = tos[1]
 
+        topframe_module = top_frame.f_globals['__name__']
 
         # debug ...
         '''
@@ -717,9 +829,9 @@ class PGLogger(bdb.Bdb):
 
         # Look only at the "topmost" frame on the stack ...
 
-        # it seems like user-written code has a filename of '<string>',
-        # but maybe there are false positives too?
-        if self.canonic(top_frame.f_code.co_filename) != '<string>':
+        # if we're not in a module that we are explicitly tracing, skip:
+        # (this comes up in tests/backend-tests/namedtuple.txt)
+        if topframe_module not in self.modules_to_trace:
           return
         # also don't trace inside of the magic "constructor" code
         if top_frame.f_code.co_name == '__new__':
@@ -727,31 +839,6 @@ class PGLogger(bdb.Bdb):
         # or __repr__, which is often called when running print statements
         if top_frame.f_code.co_name == '__repr__':
           return
-
-        # if top_frame.f_globals doesn't contain the sentinel '__OPT_toplevel__',
-        # then we're in another global scope altogether, so skip it!
-        # (this comes up in tests/backend-tests/namedtuple.txt)
-        if '__OPT_toplevel__' not in top_frame.f_globals:
-          return
-
-
-        # OLD CODE -- bail if any element on the stack matches these conditions
-        # note that the old code passes tests/backend-tests/namedtuple.txt
-        # but the new code above doesn't :/
-        '''
-        for (cur_frame, cur_line) in self.stack[1:]:
-          # it seems like user-written code has a filename of '<string>',
-          # but maybe there are false positives too?
-          if self.canonic(cur_frame.f_code.co_filename) != '<string>':
-            return
-          # also don't trace inside of the magic "constructor" code
-          if cur_frame.f_code.co_name == '__new__':
-            return
-          # or __repr__, which is often called when running print statements
-          if cur_frame.f_code.co_name == '__repr__':
-            return
-        '''
-
 
         # don't trace if wait_for_return_stack is non-null ...
         if self.wait_for_return_stack:
@@ -768,7 +855,18 @@ class PGLogger(bdb.Bdb):
           # should already be ensured by the above check for whether we're
           # in user-written code.
           if event_type == 'call':
-            func_line = self.get_script_line(top_frame.f_code.co_firstlineno)
+            first_lineno = top_frame.f_code.co_firstlineno
+            if topframe_module == "__main__":
+                func_line = self.get_script_line(first_lineno)
+            elif topframe_module in self.custom_modules:
+                module_code = self.custom_modules[topframe_module]
+                module_code_lines = module_code.splitlines() # TODO: maybe pre-split lines?
+                func_line = module_code_lines[first_lineno-1]
+            else:
+                # you're hosed
+                func_line = ''
+            #print >> sys.stderr, func_line
+
             if CLASS_RE.match(func_line.lstrip()): # ignore leading spaces
               self.wait_for_return_stack = self.get_stack_code_IDs()
               return
@@ -788,6 +886,27 @@ class PGLogger(bdb.Bdb):
 
           if self.cumulative_mode:
             self.zombie_frames.append(top_frame)
+
+        # kinda tricky to get the timing right -- basically, as soon as you
+        # make a call, set sys.stdout to the stream for the appropriate
+        # module, and as soon as you return, set sys.stdout to the
+        # stream for your caller's module. we need to do this on the
+        # return call since we want to immediately start picking up
+        # prints to stdout *right after* this function returns
+        if self.separate_stdout_by_module:
+          if event_type == 'call':
+            if topframe_module in self.stdout_by_module:
+              sys.stdout = self.stdout_by_module[topframe_module]
+            else:
+              sys.stdout = self.stdout_by_module["<other>"]
+          elif event_type == 'return' and self.curindex > 0:
+            prev_tos = self.stack[self.curindex - 1]
+            prev_topframe = prev_tos[0]
+            prev_topframe_module = prev_topframe.f_globals['__name__']
+            if prev_topframe_module in self.stdout_by_module:
+              sys.stdout = self.stdout_by_module[prev_topframe_module]
+            else:
+              sys.stdout = self.stdout_by_module["<other>"]
 
 
         # only render zombie frames that are NO LONGER on the stack
@@ -859,6 +978,9 @@ class PGLogger(bdb.Bdb):
 
             # don't display some built-in locals ...
             if k == '__module__':
+              continue
+
+            if self.should_hide_var(k):
               continue
 
             encoded_val = self.encoder.encode(v, self.get_parent_of_function)
@@ -995,6 +1117,7 @@ class PGLogger(bdb.Bdb):
 
 
         # climb up until you find '<module>', which is (hopefully) the global scope
+        top_frame = None
         while True:
           cur_frame = self.stack[i][0]
           cur_name = cur_frame.f_code.co_name
@@ -1020,6 +1143,8 @@ class PGLogger(bdb.Bdb):
           # stack to render should only be [foo, baz].
           if cur_frame in self.frame_ordered_ids:
             encoded_stack_locals.append(create_encoded_stack_entry(cur_frame))
+            if not top_frame:
+                top_frame = cur_frame
           i -= 1
 
         zombie_encoded_stack_locals = [create_encoded_stack_entry(e) for e in zombie_frames_to_render]
@@ -1028,7 +1153,11 @@ class PGLogger(bdb.Bdb):
         # encode in a JSON-friendly format now, in order to prevent ill
         # effects of aliasing later down the line ...
         encoded_globals = {}
-        for (k, v) in get_user_globals(tos[0], at_global_scope=(self.curindex <= 1)).items():
+        cur_globals_dict = get_user_globals(tos[0], at_global_scope=(self.curindex <= 1))
+        for (k, v) in cur_globals_dict.items():
+          if self.should_hide_var(k):
+            continue
+
           encoded_val = self.encoder.encode(v, self.get_parent_of_function)
           encoded_globals[k] = encoded_val
 
@@ -1102,6 +1231,21 @@ class PGLogger(bdb.Bdb):
           e['unique_hash'] = hash_str
 
 
+        # handle probe_exprs *before* encoding the heap with self.encoder.get_heap
+        encoded_probe_vals = {}
+        if self.probe_exprs:
+            if top_frame: # are we in a function call?
+                top_frame_locals = get_user_locals(top_frame)
+            else:
+                top_frame_locals = {}
+            for e in self.probe_exprs:
+                try:
+                    # evaluate it with globals + locals of the top frame ...
+                    probe_val = eval(e, cur_globals_dict, top_frame_locals)
+                    encoded_probe_vals[e] = self.encoder.encode(probe_val, self.get_parent_of_function)
+                except:
+                    pass # don't encode the value if there's been an error
+
         if self.show_only_outputs:
           trace_entry = dict(line=lineno,
                              event=event_type,
@@ -1110,7 +1254,7 @@ class PGLogger(bdb.Bdb):
                              ordered_globals=[],
                              stack_to_render=[],
                              heap={},
-                             stdout=get_user_stdout(tos[0]))
+                             stdout=self.get_user_stdout())
         else:
           trace_entry = dict(line=lineno,
                              event=event_type,
@@ -1119,7 +1263,9 @@ class PGLogger(bdb.Bdb):
                              ordered_globals=ordered_globals,
                              stack_to_render=stack_to_render,
                              heap=self.encoder.get_heap(),
-                             stdout=get_user_stdout(tos[0]))
+                             stdout=self.get_user_stdout())
+          if encoded_probe_vals:
+            trace_entry['probe_exprs'] = encoded_probe_vals
 
         # optional column numbers for greater precision
         # (only relevant in Py2crazy, a hacked CPython that supports column numbers)
@@ -1137,16 +1283,10 @@ class PGLogger(bdb.Bdb):
               trace_entry['expr_width'] = v.extent
               trace_entry['opcode'] = v.opcode
 
-
-        # TODO: refactor into a non-global
-        # these are now deprecated as of 2016-06-28
-        global __html__, __css__, __js__
-        if __html__:
-          trace_entry['html_output'] = __html__
-        if __css__:
-          trace_entry['css_output'] = __css__
-        if __js__:
-          trace_entry['js_output'] = __js__
+        # set a 'custom_module_name' field if we're executing in a module
+        # that's not the __main__ script:
+        if topframe_module != "__main__":
+          trace_entry['custom_module_name'] = topframe_module
 
         # if there's an exception, then record its info:
         if event_type == 'exception':
@@ -1196,14 +1336,34 @@ class PGLogger(bdb.Bdb):
         self.forget()
 
 
-    def _runscript(self, script_str, custom_globals=None):
+    def _runscript(self, script_str):
         self.executed_script = script_str
         self.executed_script_lines = self.executed_script.splitlines()
 
         for (i, line) in enumerate(self.executed_script_lines):
           line_no = i + 1
-          if line.endswith(BREAKPOINT_STR):
+          # subtle -- if the stripped line starts with '#break', that
+          # means it may be a commented-out version of a normal Python
+          # 'break' statement, which shouldn't be confused with an
+          # OPT user-defined breakpoint!
+          #
+          # TODO: this still fails when someone writes something like
+          # '##break' since it doesn't start with '#break'!!! i just
+          # picked an unfortunate name that's also a python keyword :0
+          if line.endswith(BREAKPOINT_STR) and not line.strip().startswith(BREAKPOINT_STR):
             self.breakpoints.append(line_no)
+
+          if line.startswith(PYTUTOR_HIDE_STR):
+            hide_vars = line[len(PYTUTOR_HIDE_STR):]
+            # remember to call strip() -> compileGlobMatch()
+            hide_vars = [compileGlobMatch(e.strip()) for e in hide_vars.split(',')]
+            self.vars_to_hide.update(hide_vars)
+
+          if line.startswith(PYTUTOR_INLINE_TYPE_STR):
+            listed_types = line[len(PYTUTOR_INLINE_TYPE_STR):]
+            # remember to call strip() -> compileGlobMatch()
+            listed_types = [compileGlobMatch(e.strip()) for e in listed_types.split(',')]
+            self.types_to_inline.update(listed_types)
 
 
         # populate an extent map to get more accurate ranges from code
@@ -1241,11 +1401,11 @@ class PGLogger(bdb.Bdb):
             builtin_items.append((k, getattr(__builtins__, k)))
 
         for (k, v) in builtin_items:
-          if k == 'open': # put this before BANNED_BUILTINS
+          if k == 'open' and not self.allow_all_modules: # put this before BANNED_BUILTINS
             user_builtins[k] = open_wrapper
           elif k in BANNED_BUILTINS:
             user_builtins[k] = create_banned_builtins_wrapper(k)
-          elif k == '__import__':
+          elif k == '__import__' and not self.allow_all_modules:
             user_builtins[k] = __restricted_import__
           else:
             if k == 'raw_input':
@@ -1261,16 +1421,17 @@ class PGLogger(bdb.Bdb):
 
         user_builtins['mouse_input'] = mouse_input_wrapper
 
-        # TODO: we can disable these imports here, but a crafty user can
-        # always get a hold of them by importing one of the external
-        # modules, so there's no point in trying security by obscurity
-        user_builtins['setHTML'] = setHTML
-        user_builtins['setCSS'] = setCSS
-        user_builtins['setJS'] = setJS
-
-        user_stdout = StringIO.StringIO()
-
-        sys.stdout = user_stdout
+        if self.separate_stdout_by_module:
+          self.stdout_by_module["__main__"] = StringIO.StringIO()
+          if self.custom_modules:
+            for module_name in self.custom_modules:
+              self.stdout_by_module[module_name] = StringIO.StringIO()
+          self.stdout_by_module["<other>"] = StringIO.StringIO() # catch-all for all other modules we're NOT tracing
+          sys.stdout = self.stdout_by_module["<other>"] # start with <other>
+        else:
+          # default -- a single unified stdout stream
+          self.user_stdout = StringIO.StringIO()
+          sys.stdout = self.user_stdout
 
         self.ORIGINAL_STDERR = sys.stderr
 
@@ -1278,16 +1439,50 @@ class PGLogger(bdb.Bdb):
         # errors, will be silently ignored. WEIRD!
         #sys.stderr = NullDevice # silence errors
 
-        user_globals = {"__name__"    : "__main__",
-                        "__builtins__" : user_builtins,
-                        "__user_stdout__" : user_stdout,
-                        # sentinel value for frames deriving from a top-level module
-                        "__OPT_toplevel__": True}
+        user_globals = {}
 
-        if custom_globals:
-            user_globals.update(custom_globals)
+        # if there are custom_modules, 'import' them into user_globals,
+        # which emulates "from <module> import *"
+        if self.custom_modules:
+            for mn in self.custom_modules:
+                # http://code.activestate.com/recipes/82234-importing-a-dynamically-generated-module/
+                new_m = imp.new_module(mn)
+                exec(self.custom_modules[mn], new_m.__dict__) # exec in custom globals
+                user_globals.update(new_m.__dict__)
+
+        # important: do this LAST to get precedence over values in custom_modules
+        user_globals.update({"__name__"    : "__main__",
+                             "__builtins__" : user_builtins})
 
         try:
+          # if allow_all_modules is on, then try to parse script_str into an
+          # AST, traverse the tree to find all modules that it imports, and then
+          # try to PRE-IMPORT all of those. if we *don't* pre-import a module,
+          # then when it's imported in the user's code, it may take *forever*
+          # because the bdb debugger tries to single-step thru that code
+          # (i think!). run 'import pandas' to quickly test this.
+          if self.allow_all_modules:
+            import ast
+            try:
+              all_modules_to_preimport = []
+              tree = ast.parse(script_str)
+              for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                  for n in node.names:
+                    all_modules_to_preimport.append(n.name)
+                elif isinstance(node, ast.ImportFrom):
+                  all_modules_to_preimport(node.module)
+
+              for m in all_modules_to_preimport:
+                if m in script_str: # optimization: load only modules that appear in script_str
+                  try:
+                    __import__(m)
+                  except ImportError:
+                    pass
+            except:
+              pass
+
+
           # enforce resource limits RIGHT BEFORE running script_str
 
           # set ~200MB virtual memory limit AND a 5-second CPU time
@@ -1296,6 +1491,20 @@ class PGLogger(bdb.Bdb):
           #   x = 2
           #   while True: x = x*x
           if resource_module_loaded and (not self.disable_security_checks):
+            assert not self.allow_all_modules # <-- shouldn't be on!
+
+            # PREEMPTIVELY import all of these modules, so that when the user's
+            # script imports them, it won't try to do a file read (since they've
+            # already been imported and cached in memory). Remember that when
+            # the user's code runs, resource.setrlimit(resource.RLIMIT_NOFILE, (0, 0))
+            # will already be in effect, so no more files can be opened.
+            for m in ALLOWED_STDLIB_MODULE_IMPORTS:
+              if m in script_str: # optimization: load only modules that appear in script_str
+                try:
+                  __import__(m)
+                except ImportError:
+                  pass
+
             resource.setrlimit(resource.RLIMIT_AS, (200000000, 200000000))
             resource.setrlimit(resource.RLIMIT_CPU, (5, 5))
 
@@ -1418,14 +1627,26 @@ class PGLogger(bdb.Bdb):
 
       self.trace = res
 
-      return self.finalizer_func(self.executed_script, self.trace)
+      if self.custom_modules:
+        # when there's custom_modules, call with a dict as the first parameter
+        return self.finalizer_func(dict(main_code=self.executed_script,
+                                        custom_modules=self.custom_modules),
+                                   self.trace)
+      else:
+        # common case
+        return self.finalizer_func(self.executed_script, self.trace)
 
 
 import json
 
 # the MAIN meaty function!!!
 def exec_script_str(script_str, raw_input_lst_json, options_json, finalizer_func):
-  options = json.loads(options_json)
+  if options_json:
+    options = json.loads(options_json)
+  else:
+    # defaults
+    options = {'cumulative_mode': False,
+               'heap_primitives': False, 'show_only_outputs': False}
 
   py_crazy_mode = ('py_crazy_mode' in options and options['py_crazy_mode'])
 
@@ -1439,9 +1660,6 @@ def exec_script_str(script_str, raw_input_lst_json, options_json, finalizer_func
     # TODO: if we want to support unicode, remove str() cast
     input_string_queue = [str(e) for e in json.loads(raw_input_lst_json)]
 
-  global __html__, __css__, __js__
-  __html__, __css__, __js__ = None, None, None
-
   try:
     logger._runscript(script_str)
   except bdb.BdbQuit:
@@ -1453,9 +1671,15 @@ def exec_script_str(script_str, raw_input_lst_json, options_json, finalizer_func
 # disables security check and returns the result of finalizer_func
 # WARNING: ONLY RUN THIS LOCALLY and never over the web, since
 # security checks are disabled
-def exec_script_str_local(script_str, raw_input_lst_json, cumulative_mode, heap_primitives, finalizer_func):
-  # TODO: add py_crazy_mode option here too ...
-  logger = PGLogger(cumulative_mode, heap_primitives, False, finalizer_func, disable_security_checks=True)
+#
+# [optional] probe_exprs is a list of strings representing
+# expressions whose values to probe at each step (advanced)
+def exec_script_str_local(script_str, raw_input_lst_json, cumulative_mode, heap_primitives, finalizer_func,
+                          probe_exprs=None, allow_all_modules=False):
+  logger = PGLogger(cumulative_mode, heap_primitives, False, finalizer_func,
+                    disable_security_checks=True,
+                    allow_all_modules=allow_all_modules,
+                    probe_exprs=probe_exprs)
 
   # TODO: refactor these NOT to be globals
   global input_string_queue
@@ -1464,27 +1688,9 @@ def exec_script_str_local(script_str, raw_input_lst_json, cumulative_mode, heap_
     # TODO: if we want to support unicode, remove str() cast
     input_string_queue = [str(e) for e in json.loads(raw_input_lst_json)]
 
-  global __html__, __css__, __js__
-  __html__, __css__, __js__ = None, None, None
-
   try:
     logger._runscript(script_str)
   except bdb.BdbQuit:
     pass
   finally:
     return logger.finalize()
-
-
-def exec_str_with_user_ns(script_str, user_ns, finalizer_func):
-  logger = PGLogger(False, False, False, finalizer_func, disable_security_checks=True)
-
-  global __html__, __css__, __js__
-  __html__, __css__, __js__ = None, None, None
-
-  try:
-    logger._runscript(script_str, user_ns)
-  except bdb.BdbQuit:
-    pass
-  finally:
-    return logger.finalize()
-

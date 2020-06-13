@@ -25,7 +25,8 @@
 /* copied from pytutor.css - TODO: integrate and merge together */
 /* VCR control buttons for stepping through execution */
 #vcrControls {
-  margin: 15px auto;
+  margin-top: 15px;
+  margin-bottom: 6px;
   /*width: 100%;*/
   text-align: center;
 }
@@ -36,8 +37,11 @@
 }
 
 #curInstr {
+  /*
   margin-left: 4px;
   margin-right: 4px;
+  */
+  text-align: center;
 }
 
 div#rawUserInputDiv {
@@ -49,17 +53,30 @@ div#rawUserInputDiv {
 }
 
 
+button.surveyBtn {
+  font-size: 8pt;
+  margin-top: 8px;
+}
+
+button.surveyBtnBig {
+  font-size: 11pt;
+  padding: 5px;
+  margin-top: 0px;
+}
+
+
 /* keep it a fixed min height so that footer below it doesn't jiggle up
    and down */
 #frontendErrorOutput {
-  min-height: 40px;
+  min-height: 20pt;
 }
 
 #liveModeHeader {
   margin-left: 3px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+  margin-top: 10px;
   color: #888;
-  width: 600px;
+  /*width: 600px;*/
 }
 
 /* copied from pytutor.css */

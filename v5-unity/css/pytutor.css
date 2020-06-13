@@ -60,6 +60,13 @@ div.ExecutionVisualizer #dataViz {
   /*margin-left: 25px;*/
 }
 
+div.ExecutionVisualizer #selectiveHideStatus {
+  /*margin-left: 25px;*/
+  font-size: 9pt;
+  margin-bottom: 15px;
+  margin-left: 13px;
+}
+
 /*
 div.ExecutionVisualizer div#codeDisplayDiv {
   width: 550px;
@@ -182,8 +189,8 @@ div.ExecutionVisualizer textarea#vizDescriptionEditor {
 
 div.ExecutionVisualizer #errorOutput {
   color: #e93f34; /* should match brightRed JavaScript variable */
-  font-size: 12pt;
-  padding: 2px;
+  font-size: 11pt;
+  padding-top: 2px;
   line-height: 1.5em;
   margin-bottom: 4px;
 }
@@ -191,7 +198,8 @@ div.ExecutionVisualizer #errorOutput {
 /* VCR control buttons for stepping through execution */
 
 div.ExecutionVisualizer #vcrControls {
-  margin: 15px auto;
+  margin-top: 15px;
+  margin-bottom: 6px;
   /*width: 100%;*/
   text-align: center;
 }
@@ -201,9 +209,8 @@ div.ExecutionVisualizer #vcrControls button {
   margin-right: 2px;
 }
 
-div.ExecutionVisualizer #vcrControls #curInstr {
-  margin-left: 4px;
-  margin-right: 4px;
+div.ExecutionVisualizer #curInstr {
+  text-align: center;
 }
 
 div.ExecutionVisualizer #pyStdout {
@@ -227,8 +234,12 @@ div.ExecutionVisualizer .vizFrame {
 
 /* Rendering of primitive types */
 
+div.ExecutionVisualizer .importedObj {
+  font-size: 8pt;
+}
+
 div.ExecutionVisualizer .nullObj {
-//  font-size: 8pt;
+/*  font-size: 8pt; */
 }
 
 div.ExecutionVisualizer .stringObj,
@@ -331,6 +342,30 @@ div.ExecutionVisualizer table.cArrayTbl td.cArrayElt {
   vertical-align: bottom;
 }
 
+div.ExecutionVisualizer table.cArrayTbl td.cMultidimArrayHeader {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 1px;
+  padding-bottom: 3px;
+  font-size: 6pt;
+  color: #777;
+  text-align: left;
+  border-top: 1px solid #888;
+  border-left: 1px solid #888;
+  border-bottom: 0px solid black; /* override whatever we're nested in */
+}
+
+div.ExecutionVisualizer table.cArrayTbl td.cMultidimArrayElt {
+  border-left: 1px solid #888;
+  color: black;
+  padding-top: 1px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: bottom;
+}
+
+
 div.ExecutionVisualizer .cdataHeader {
   font-size: 6pt;
   color: #555;
@@ -358,6 +393,7 @@ div.ExecutionVisualizer table.customObjTbl {
 
 div.ExecutionVisualizer table.customObjTbl td.customObjElt {
   padding: 5px;
+  font-size: 9pt; /* make this smaller */
 }
 
 div.ExecutionVisualizer table.listTbl td.listElt,
@@ -696,6 +732,12 @@ div.ExecutionVisualizer .highlight-legend {
   border-color: #dddddd;
 }
 
+div.ExecutionVisualizer a,
+div.ExecutionVisualizer a:visited,
+div.ExecutionVisualizer a:hover {
+  color: #3D58A2;
+}
+
 div.ExecutionVisualizer div#rawUserInputDiv {
   padding: 5px;
   width: 95%;
@@ -741,6 +783,10 @@ div.ExecutionVisualizer .pycrazy-highlight-prev-and-cur {
 
 #optTabularView td.stepTableTd {
   padding: 3px 10px;
+}
+
+#uiControlsPane {
+  font-size: 8pt;
 }
 
 

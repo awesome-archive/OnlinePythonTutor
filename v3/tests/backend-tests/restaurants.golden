@@ -20,17 +20,11 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ]
       }, 
-      "heap": {
-        "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ]
-      }, 
+      "heap": {}, 
       "line": 4, 
       "event": "step_line"
     }, 
@@ -44,21 +38,16 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -68,129 +57,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -198,14 +187,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -220,10 +213,6 @@
           "<property object at 0xADDR>"
         ], 
         "15": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "16": [
           "property", 
           "<property object at 0xADDR>"
         ]
@@ -242,25 +231,20 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -270,129 +254,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -400,14 +384,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -426,12 +414,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -469,29 +454,24 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -501,129 +481,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -631,14 +611,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -657,12 +641,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -684,9 +665,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -725,33 +707,28 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -761,129 +738,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -891,14 +868,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -917,12 +898,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -944,9 +922,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -968,9 +947,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -1014,36 +994,31 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -1053,129 +1028,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -1183,14 +1158,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -1209,12 +1188,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -1236,9 +1212,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -1260,9 +1237,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -1287,9 +1265,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -1331,40 +1310,35 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -1374,129 +1348,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -1504,14 +1478,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -1530,12 +1508,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -1557,9 +1532,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -1581,9 +1557,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -1608,9 +1585,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -1632,9 +1610,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -1677,44 +1656,39 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -1724,129 +1698,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -1854,14 +1828,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -1880,12 +1858,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -1907,9 +1882,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -1931,9 +1907,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -1958,9 +1935,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -1982,9 +1960,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -2006,9 +1985,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -2055,48 +2035,43 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -2106,129 +2081,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -2236,14 +2211,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -2262,12 +2241,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -2289,9 +2265,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -2313,9 +2290,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -2340,9 +2318,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -2364,9 +2343,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -2388,9 +2368,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -2415,8 +2396,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -2436,10 +2421,6 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ]
       }, 
@@ -2465,52 +2446,47 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "r": [
           "REF", 
-          17
+          16
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -2520,129 +2496,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -2650,14 +2626,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -2676,12 +2656,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -2703,9 +2680,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -2727,9 +2705,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -2754,9 +2733,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -2778,9 +2758,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -2802,9 +2783,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -2829,8 +2811,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -2850,10 +2836,6 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ]
       }, 
@@ -2879,52 +2861,47 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "r": [
           "REF", 
-          18
+          17
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -2934,129 +2911,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -3064,14 +3041,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -3090,12 +3071,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -3117,9 +3095,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -3141,9 +3120,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -3168,9 +3148,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -3192,9 +3173,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -3216,9 +3198,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -3243,8 +3226,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -3264,10 +3251,6 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ]
       }, 
@@ -3293,52 +3276,47 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "r": [
           "REF", 
-          19
+          18
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -3348,129 +3326,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -3478,14 +3456,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -3504,12 +3486,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -3531,9 +3510,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -3555,9 +3535,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -3582,9 +3563,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -3606,9 +3588,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -3630,9 +3613,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -3657,8 +3641,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -3678,10 +3666,6 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ]
       }, 
@@ -3707,52 +3691,47 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "r": [
           "REF", 
-          20
+          19
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -3762,129 +3741,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -3892,14 +3871,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -3918,12 +3901,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -3945,9 +3925,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -3969,9 +3950,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -3996,9 +3978,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -4020,9 +4003,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -4044,9 +4028,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -4071,8 +4056,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -4092,10 +4081,6 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ]
       }, 
@@ -4121,52 +4106,47 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "r": [
           "REF", 
-          21
+          20
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -4176,129 +4156,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -4306,14 +4286,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -4332,12 +4316,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -4359,9 +4340,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -4383,9 +4365,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -4410,9 +4393,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -4434,9 +4418,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -4458,9 +4443,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -4485,8 +4471,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -4506,10 +4496,6 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ]
       }, 
@@ -4535,52 +4521,47 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "r": [
           "REF", 
-          22
+          21
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -4590,129 +4571,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -4720,14 +4701,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -4746,12 +4731,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -4773,9 +4755,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -4797,9 +4780,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -4824,9 +4808,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -4848,9 +4833,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -4872,9 +4858,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -4899,8 +4886,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -4920,10 +4911,6 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ]
       }, 
@@ -4950,56 +4937,51 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "FrenchRestaurants": [
           "REF", 
-          24
+          23
         ], 
         "r": [
           "REF", 
-          22
+          21
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -5009,129 +4991,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -5139,14 +5121,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -5165,12 +5151,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -5192,9 +5175,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -5216,9 +5200,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -5243,9 +5228,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -5267,9 +5253,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -5291,9 +5278,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -5318,8 +5306,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -5339,14 +5331,14 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ], 
-        "24": [
+        "23": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -5354,10 +5346,6 @@
           [
             "REF", 
             18
-          ], 
-          [
-            "REF", 
-            19
           ]
         ]
       }, 
@@ -5384,56 +5372,51 @@
       "globals": {
         "R4": [
           "REF", 
-          20
+          19
         ], 
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported function"
         ], 
         "R6": [
           "REF", 
-          22
+          21
         ], 
         "R1": [
           "REF", 
-          17
+          16
         ], 
         "R2": [
           "REF", 
-          18
+          17
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ], 
         "R3": [
           "REF", 
-          19
+          18
         ], 
         "FrenchRestaurants": [
           "REF", 
-          24
+          23
         ], 
         "r": [
           "REF", 
-          22
+          21
         ], 
         "R5": [
           "REF", 
-          21
+          20
         ], 
         "RL": [
           "REF", 
-          23
+          22
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -5443,129 +5426,129 @@
             "__getnewargs__", 
             [
               "REF", 
-              3
+              2
             ]
           ], 
           [
             "__getstate__", 
             [
               "REF", 
-              4
+              3
             ]
           ], 
           [
             "__new__", 
             [
               "REF", 
-              5
+              4
             ]
           ], 
           [
             "__repr__", 
             [
               "REF", 
-              6
+              5
             ]
           ], 
           [
             "__slots__", 
             [
               "REF", 
-              7
+              6
             ]
           ], 
           [
             "_asdict", 
             [
               "REF", 
-              8
+              7
             ]
           ], 
           [
             "_fields", 
             [
               "REF", 
-              9
+              8
             ]
           ], 
           [
             "_make", 
             [
               "REF", 
-              10
+              9
             ]
           ], 
           [
             "_replace", 
             [
               "REF", 
-              11
+              10
             ]
           ], 
           [
             "cuisine", 
             [
               "REF", 
-              12
+              11
             ]
           ], 
           [
             "dish", 
             [
               "REF", 
-              13
+              12
             ]
           ], 
           [
             "name", 
             [
               "REF", 
-              14
+              13
             ]
           ], 
           [
             "phone", 
             [
               "REF", 
-              15
+              14
             ]
           ], 
           [
             "price", 
             [
               "REF", 
-              16
+              15
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
           null
         ], 
-        "4": [
+        "3": [
           "FUNCTION", 
           "__getstate__(self)", 
           null
         ], 
-        "5": [
+        "4": [
           "staticmethod", 
           "<staticmethod object at 0xADDR>"
         ], 
-        "6": [
+        "5": [
           "FUNCTION", 
           "__repr__(self)", 
           null
         ], 
-        "7": [
+        "6": [
           "TUPLE"
         ], 
-        "8": [
+        "7": [
           "FUNCTION", 
           "_asdict(self)", 
           null
         ], 
-        "9": [
+        "8": [
           "TUPLE", 
           "name", 
           "cuisine", 
@@ -5573,14 +5556,18 @@
           "dish", 
           "price"
         ], 
-        "10": [
+        "9": [
           "classmethod", 
           "<classmethod object at 0xADDR>"
         ], 
-        "11": [
+        "10": [
           "FUNCTION", 
           "_replace(_self, **kwds)", 
           null
+        ], 
+        "11": [
+          "property", 
+          "<property object at 0xADDR>"
         ], 
         "12": [
           "property", 
@@ -5599,12 +5586,9 @@
           "<property object at 0xADDR>"
         ], 
         "16": [
-          "property", 
-          "<property object at 0xADDR>"
-        ], 
-        "17": [
-          "INSTANCE", 
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
           [
             "cuisine", 
             "French"
@@ -5626,9 +5610,10 @@
             24.500
           ]
         ], 
-        "18": [
-          "INSTANCE", 
+        "17": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
           [
             "cuisine", 
             "French"
@@ -5650,9 +5635,10 @@
             48.500
           ]
         ], 
-        "19": [
-          "INSTANCE", 
+        "18": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Pascal', cuisine='French', phone='333-4444', dish='Bouillabaisse', price=32.0)", 
           [
             "cuisine", 
             "French"
@@ -5677,9 +5663,10 @@
             ]
           ]
         ], 
-        "20": [
-          "INSTANCE", 
+        "19": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Touch', cuisine='Thai', phone='444-3333', dish='Mee Krob', price=10.95)", 
           [
             "cuisine", 
             "Thai"
@@ -5701,9 +5688,10 @@
             10.950
           ]
         ], 
-        "21": [
-          "INSTANCE", 
+        "20": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Dishes', cuisine='Thai', phone='333-4433', dish='Paht Woon Sen', price=8.5)", 
           [
             "cuisine", 
             "Thai"
@@ -5725,9 +5713,10 @@
             8.500
           ]
         ], 
-        "22": [
-          "INSTANCE", 
+        "21": [
+          "INSTANCE_PPRINT", 
           "Restaurant", 
+          "Restaurant(name='Thai Spoon', cuisine='Thai', phone='334-3344', dish='Mussamun', price=9.0)", 
           [
             "cuisine", 
             "Thai"
@@ -5752,8 +5741,12 @@
             ]
           ]
         ], 
-        "23": [
+        "22": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -5773,14 +5766,14 @@
           [
             "REF", 
             21
-          ], 
-          [
-            "REF", 
-            22
           ]
         ], 
-        "24": [
+        "23": [
           "LIST", 
+          [
+            "REF", 
+            16
+          ], 
           [
             "REF", 
             17
@@ -5788,10 +5781,6 @@
           [
             "REF", 
             18
-          ], 
-          [
-            "REF", 
-            19
           ]
         ]
       }, 

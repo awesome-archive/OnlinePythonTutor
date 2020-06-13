@@ -3,7 +3,7 @@
 
 <!--
   Python Tutor: https://github.com/pgbovine/OnlinePythonTutor/
-  Copyright (C) Philip Guo (philip@pgbovine.net)
+  Copyright (C) Philip Guo
   LICENSE: https://github.com/pgbovine/OnlinePythonTutor/blob/master/LICENSE.txt
 -->
 
@@ -16,7 +16,7 @@
   <!-- let Webpack take care of everything. Use the [hash] feature to
        create unique filenames for releases:
        https://webpack.github.io/docs/long-term-caching.html -->
-  <script type="text/javascript" src="build/opt-live.bundle.js?df2044a01c" charset="utf-8"></script>
+  <script type="text/javascript" src="build/opt-live.bundle.js?9406e62717" charset="utf-8"></script>
 
 <!-- insert google-analytics.txt contents here -->
 
@@ -25,19 +25,25 @@
 <body>
 
   <div id="liveModeHeader">
+  This mode is experimental. Use the <a href="visualize.html" target="_blank">regular Python Tutor</a> to <span style="font-weight: bold;">get live help</span> and use more features.
 
-  This is the <b>live programming mode</b> of Python Tutor, which
-  continually runs and visualizes your code as you type. It is highly
-  <b>experimental</b> and does not yet support all of the languages and
-  features of the <a href="visualize.html" target="_blank">regular
-  Python Tutor visualizer</a>.
+  <span id="surveyPane"></span>
 
+  <!-- taken down on 2016-12-06
   <p>Help us improve this live programming mode by filling out this <a
   target="_blank"
   href="https://docs.google.com/forms/d/1XT-rPaWxDRNOPAfBxIqzCXs7nYGUgOjNofmUnuQZYV8/viewform">two-question
   survey</a>.</p>
+  -->
 
   </div>
+
+<table id="experimentalHeader">
+<tr>
+<td valign="top" id="headerTdLeft"></td>
+<td valign="top" id="headerTdRight"></td>
+</tr>
+</table>
 
   <table>
     <tr>
@@ -46,12 +52,13 @@
           <div id="codeInputWarnings">Write code in
             <select id="pythonVersionSelector">
               <option value="2">Python 2.7</option>
-              <option value="3">Python 3.3</option>
+              <option value="3" selected>Python 3.6</option>
               <option value="js">JavaScript ES6</option>
             </select>
 
-            <span style="color: #888; font-size: 8pt; float: right;">(drag lower right corner to resize code editor)</span>
+            <span id="liveModeExtraWarning" style="color: #888; font-size: 8pt; float: right;">(drag lower right corner to resize code editor)</span>
           </div>
+          <div id="someoneIsTypingDiv" style="color: #e93f34; font-weight: bold; display: none;">Someone is typing ...</div>
 
           <div id="codeInputPane"></div>
           <div id="legendDiv"></div>
@@ -62,11 +69,11 @@
 
           <div id="vcrControls" style="display: none;">
             <button id="jmpFirstInstr", type="button">&lt;&lt; First</button>
-            <button id="jmpStepBack", type="button">&lt; Back</button>
-            <span id="curInstr"></span>
-            <button id="jmpStepFwd", type="button">Forward &gt;</button>
+            <button id="jmpStepBack", type="button">&lt; Prev</button>
+            <button id="jmpStepFwd", type="button">Next &gt;</button>
             <button id="jmpLastInstr", type="button">Last &gt;&gt;</button>
           </div>
+          <div id="curInstr" style="display: none;"></div>
 
           <div id="rawUserInputDiv" style="display: none;">
             <span id="userInputPromptStr"></span>
@@ -76,6 +83,7 @@
 
           <div id="frontendErrorOutput"></div>
         </div>
+        <div id="eurekaSurveyPane"></div>
       </td>
       <td valign="top">
         <div id="pyOutputPane"/>
@@ -85,19 +93,15 @@
 
 <div id="footer">
 
-<p style="color: black; font-size: 10pt; margin-top: 10px; margin-bottom: 15px; line-height: 175%;"> <span>Support our research and keep this tool free by <a href="https://docs.google.com/forms/d/1lrXsE04ghfX9wNzTVwm1Wc6gQ5I-B4uw91ACrbDhJs8/viewform" target="_blank"><b>filling out this user survey</b></a>.</span>
-</p>
-
-<p>Visualizer options:</p>
-
-<div id="optionsPane" style="margin-top: 10px; padding-bottom: 15px; line-height: 150%;">
+<div id="optionsPane">
   <select id="cumulativeModeSelector">
     <option value="false">hide exited frames [default]</option>
     <option value="true">show exited frames (Python)</option>
     <!-- <option value="holistic">holistic mode (experimental)</option> -->
   </select>
   <select id="heapPrimitivesSelector">
-    <option value="false">inline primitives &amp; nested objects [default]</option>
+    <option value="false">inline primitives and try to nest objects</option>
+    <option value="nevernest" selected>inline primitives but don't nest objects [default]</option>
     <option value="true">render all objects on the heap (Python)</option>
   </select>
   <select id="textualMemoryLabelsSelector">
@@ -107,36 +111,20 @@
 </div>
 
 <p>
-  <button id="genUrlBtn" class="smallBtn" type="button">Generate permanent link</button> <input type="text" id="urlOutput" size="70"/>
+  <button id="genUrlBtn" class="smallBtn" type="button">Generate permanent link</button> <input type="text" id="urlOutput" size="65"/> (<a href="https://www.youtube.com/watch?v=h4q3UKdEFKE" target="_blank">video demo</a>)
 </p>
-
-<p>Click the button above to create a permanent link to your
-visualization. To report a bug, paste the link along with a brief error
-description in an email addressed to philip@pgbovine.net</p>
 
 <p style="margin-top: 35px;">
 This live programming mode of
 <a href="http://pythontutor.com/">Python Tutor</a> (<a href="https://github.com/pgbovine/OnlinePythonTutor">code on GitHub</a>) supports three
-languages: Python <a href="http://www.python.org/doc/2.7/">2.7</a> and <a
-href="http://www.python.org/doc/3.3.0/">3.3</a> with limited module
-imports and no file I/O, and
+languages: Python <a href="https://docs.python.org/2.7/">2.7</a> and <a
+href="https://docs.python.org/3.6/">3.6</a> with limited module
+imports, and
 JavaScript running in Node.js v6.0.0 with limited support for ES6.
 
 Try the regular
 <a href="http://pythontutor.com/visualize.html">Python Tutor</a>
 visualizer for additional language support.</p>
-
-<p style="margin-top: 30px;">Privacy Policy: By using Online Python
-Tutor, your visualized code, options, user interactions, text chats, and
-IP address are logged on our server and may be analyzed for research
-purposes. Nearly all Web services collect this basic information from
-users. However, the Online Python Tutor website (pythontutor.com) does
-not collect any personal information or session state from users, nor
-does it issue any cookies.</p>
-
-<p style="margin-top: 25px;">
-Copyright &copy; <a href="http://www.pgbovine.net/">Philip Guo</a>.  All rights reserved.
-</p>
 
 </div>
 

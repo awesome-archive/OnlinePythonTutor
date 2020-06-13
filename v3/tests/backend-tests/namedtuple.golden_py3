@@ -20,17 +20,11 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported object"
         ]
       }, 
-      "heap": {
-        "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ]
-      }, 
+      "heap": {}, 
       "line": 3, 
       "event": "step_line"
     }, 
@@ -44,21 +38,16 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported object"
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -66,6 +55,13 @@
           ], 
           [
             "__getnewargs__", 
+            [
+              "REF", 
+              2
+            ]
+          ], 
+          [
+            "__getstate__", 
             [
               "REF", 
               3
@@ -156,9 +152,14 @@
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
+          null
+        ], 
+        "3": [
+          "FUNCTION", 
+          "__getstate__(self)", 
           null
         ], 
         "4": [
@@ -230,8 +231,8 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported object"
         ], 
         "R1": [
           "REF", 
@@ -239,16 +240,11 @@
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -256,6 +252,13 @@
           ], 
           [
             "__getnewargs__", 
+            [
+              "REF", 
+              2
+            ]
+          ], 
+          [
+            "__getstate__", 
             [
               "REF", 
               3
@@ -346,9 +349,14 @@
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
+          null
+        ], 
+        "3": [
+          "FUNCTION", 
+          "__getstate__(self)", 
           null
         ], 
         "4": [
@@ -406,8 +414,29 @@
           "property"
         ], 
         "16": [
-          "INSTANCE", 
-          "Restaurant"
+          "INSTANCE_PPRINT", 
+          "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
+          [
+            "cuisine", 
+            "French"
+          ], 
+          [
+            "dish", 
+            "Escargots"
+          ], 
+          [
+            "name", 
+            "Taillevent"
+          ], 
+          [
+            "phone", 
+            "343-3434"
+          ], 
+          [
+            "price", 
+            24.500
+          ]
         ]
       }, 
       "line": 6, 
@@ -425,8 +454,8 @@
       "stack_to_render": [], 
       "globals": {
         "namedtuple": [
-          "REF", 
-          1
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported object"
         ], 
         "R1": [
           "REF", 
@@ -438,16 +467,11 @@
         ], 
         "Restaurant": [
           "REF", 
-          2
+          1
         ]
       }, 
       "heap": {
         "1": [
-          "FUNCTION", 
-          "namedtuple(typename, field_names, verbose, rename)", 
-          null
-        ], 
-        "2": [
           "CLASS", 
           "Restaurant", 
           [
@@ -455,6 +479,13 @@
           ], 
           [
             "__getnewargs__", 
+            [
+              "REF", 
+              2
+            ]
+          ], 
+          [
+            "__getstate__", 
             [
               "REF", 
               3
@@ -545,9 +576,14 @@
             ]
           ]
         ], 
-        "3": [
+        "2": [
           "FUNCTION", 
           "__getnewargs__(self)", 
+          null
+        ], 
+        "3": [
+          "FUNCTION", 
+          "__getstate__(self)", 
           null
         ], 
         "4": [
@@ -605,12 +641,54 @@
           "property"
         ], 
         "16": [
-          "INSTANCE", 
-          "Restaurant"
+          "INSTANCE_PPRINT", 
+          "Restaurant", 
+          "Restaurant(name='Taillevent', cuisine='French', phone='343-3434', dish='Escargots', price=24.5)", 
+          [
+            "cuisine", 
+            "French"
+          ], 
+          [
+            "dish", 
+            "Escargots"
+          ], 
+          [
+            "name", 
+            "Taillevent"
+          ], 
+          [
+            "phone", 
+            "343-3434"
+          ], 
+          [
+            "price", 
+            24.500
+          ]
         ], 
         "17": [
-          "INSTANCE", 
-          "Restaurant"
+          "INSTANCE_PPRINT", 
+          "Restaurant", 
+          "Restaurant(name=\"La Tour D'Argent\", cuisine='French', phone='343-3344', dish='Ris de Veau', price=48.5)", 
+          [
+            "cuisine", 
+            "French"
+          ], 
+          [
+            "dish", 
+            "Ris de Veau"
+          ], 
+          [
+            "name", 
+            "La Tour D'Argent"
+          ], 
+          [
+            "phone", 
+            "343-3344"
+          ], 
+          [
+            "price", 
+            48.500
+          ]
         ]
       }, 
       "line": 6, 

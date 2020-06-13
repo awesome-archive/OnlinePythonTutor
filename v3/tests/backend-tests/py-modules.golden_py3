@@ -65,8 +65,8 @@
       "stack_to_render": [], 
       "globals": {
         "compile": [
-          "REF", 
-          2
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported object"
         ], 
         "random": [
           "REF", 
@@ -77,11 +77,6 @@
         "1": [
           "INSTANCE", 
           "module"
-        ], 
-        "2": [
-          "FUNCTION", 
-          "compile(pattern, flags)", 
-          null
         ]
       }, 
       "line": 7, 
@@ -98,12 +93,12 @@
       "stack_to_render": [], 
       "globals": {
         "compile": [
-          "REF", 
-          2
+          "IMPORTED_FAUX_PRIMITIVE", 
+          "imported object"
         ], 
         "x": [
           "REF", 
-          3
+          2
         ], 
         "random": [
           "REF", 
@@ -116,11 +111,6 @@
           "module"
         ], 
         "2": [
-          "FUNCTION", 
-          "compile(pattern, flags)", 
-          null
-        ], 
-        "3": [
           "INSTANCE", 
           "SRE_Pattern"
         ]

@@ -2,10 +2,10 @@ Python Tutor -- http://pythontutor.com/ -- helps people overcome a fundamental b
 
 This tool was created by [Philip Guo](http://pgbovine.net/) in January 2010. [See project history](history.txt).
 
-- [Frequently Asked Questions](v3/docs/user-FAQ.md)
-- [Overview for Developers](v3/docs/developer-overview.md)
+[List of unsupported features and known bugs](https://github.com/pgbovine/OnlinePythonTutor/blob/master/unsupported-features.md)
 
-All documentation is viewable online at: https://github.com/pgbovine/OnlinePythonTutor/tree/master/v3/docs
+The latest development version of the code is in [v5-unity](v5-unity/),
+although lots of legacy documentation still resides in [v3](v3/).
 
 
 ### Quick Start
@@ -18,7 +18,7 @@ If you want to run locally on your own computer, to run Python visualizations tr
 
 ```
 pip install bottle # make sure the bottle webserver (http://bottlepy.org/) is installed
-cd OnlinePythonTutor/v3/
+cd OnlinePythonTutor/v5-unity/
 python bottle_server.py
 ```
 
@@ -26,29 +26,31 @@ You should see the visualizer at: http://localhost:8003/visualize.html
 
 ... and the live programming environment at: http://localhost:8003/live.html 
 
-However, it can be hard to run your own visualizer locally for non-Python languages, since there are complex setups in v4-cokapi/ that I haven't yet cleanly packaged up.
+However, it can be hard to run your own visualizer locally for
+non-Python languages, since there are complex dependencies in v4-cokapi/ that
+I haven't yet cleanly packaged up. By default, the local version you run will
+*call my own server to run the non-Python backends*, so please be mindful of
+your bandwidth usage.
+
+Note: *I can't provide technical support for users who want to install Python Tutor on their own computers/servers ([read details here](https://github.com/pgbovine/OnlinePythonTutor/blob/master/unsupported-features.md)).*
 
 For further directions, see [Overview for Developers](v3/docs/developer-overview.md) or explore the [rest of the docs](v3/docs/).
 
 
 ### Acknowledgments
 
-For code or security contributions
+For code or security contributions:
+- Irene Chen - experimental holistic visualization mode - v3/js/holistic.js
+- John DeNero - helping with the official Python 3 port, bug fixes galore
+- Mark Liffiton - localStorage bug fix
+- Chris Meyers - custom visualizations such as v3/matrix.py and v3/htmlFrame.py
+- Brad Miller - adding pop-up question dialogs to visualizations, other bug fixes
+- David Pritchard and Will Gwozdz - Java visualizer and other frontend enhancements
+- Peter Robinson - v3/make_visualizations.py
+- Peter Wentworth and his students - working on the original Python 3 fork circa 2010-2011
+- Security tips and vulnerability reports: Aaron E. (https://arinerron.com), Chris Horne (https://github.com/lahwran), Joshua Landau (joshua@landau.ws), David Wyde (https://davidwyde.com/)
 
-- John DeNero - for helping with the official Python 3 port and lots of code patches
-- Chris Horne - https://github.com/lahwran - for security tips
-- Joshua Landau - joshua@landau.ws - for security tips
-- David Wyde - https://davidwyde.com/ - for security tips
-- Peter Wentworth and his students - for working on the original Python 3 fork circa 2010/2011
-- Brad Miller - for adding pop-up question dialogs to visualizations, and other bug fixes
-- David Pritchard and Will Gwozdz - for the Java visualizer and other frontend enhancements
-- Peter Robinson - for v3/make_visualizations.py
-- Chris Meyers - for custom visualizations such as v3/matrix.py and v3/htmlFrame.py
-- Irene Chen - for holistic visualization mode -- v3/js/holistic.js
-
-
-For general advice and feedback about this project:
-
+For user testing and feedback from instructors' perspectives:
 - Ned Batchelder
 - Jennifer Campbell
 - John Dalbey
@@ -60,6 +62,7 @@ For general advice and feedback about this project:
 - Mark Guzdial
 - Adam Hartz
 - Sean Lip
+- Fernando Perez
 - Tomas Lozano-Perez
 - Bertram Ludaescher
 - Brad Miller

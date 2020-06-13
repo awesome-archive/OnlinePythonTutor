@@ -20,7 +20,8 @@ require('./lib/diff_match_patch.js');
 require('./lib/jquery.ba-dotimeout.min.js');
 
 // need to directly import the class for type checking to work
-import {ExecutionVisualizer, assert, htmlspecialchars} from './pytutor.ts';
+import {ExecutionVisualizer, assert, htmlspecialchars} from './pytutor';
+import {nullTraceErrorLst,unsupportedFeaturesStr} from './footer-html';
 
 
 // the main event!
@@ -34,6 +35,12 @@ export abstract class AbstractBaseFrontend {
 
   myVisualizer: ExecutionVisualizer;
   originFrontendJsFile: string; // "abstract" -- must override in subclass
+
+  // a cache where each element is a pair:
+  // [appState, cached execution trace]
+  // that way, if you execute the same code with the same settings again and
+  // get a cache hit, then there's no need to make a server call
+  traceCache = [];
 
   // 'edit' or 'display'. also support 'visualize' for backward
   // compatibility (same as 'display')
@@ -74,13 +81,20 @@ export abstract class AbstractBaseFrontend {
     'ruby': 'web_exec_ruby.py',
     'c':   'web_exec_c.py',
     'cpp': 'web_exec_cpp.py',
+
+    // experimental!
+    'py3anaconda': 'web_exec_py3anaconda.py',
   };
 
   // these settings are all customized for my own server setup,
   // so you will need to customize for your server:
   serverRoot = (window.location.protocol === 'https:') ?
-                'https://cokapi.com:8001/' : // my certificate for https is registered via cokapi.com, so use it for now
-                'http://104.237.139.253:3000/';
+                'https://cokapi.com/' : // my certificate for https is registered via cokapi.com, so use it for now
+                'http://cokapi.com/';   // try cokapi.com so that hopefully it works through firewalls better than directly using its IP addr (which should be 104.237.139.253)
+                                        // (but that's just an unsubstantiated hunch)
+
+  // randomly pick one backup server to load balance:
+  backupHttpServerRoot = (Math.random() >= 0.5) ? 'http://45.33.41.179/' : 'http://23.239.12.25/';
 
   // see ../../v4-cokapi/cokapi.js for details
   langSettingToJsonpEndpoint = {
@@ -92,6 +106,19 @@ export abstract class AbstractBaseFrontend {
     'ruby': this.serverRoot + 'exec_ruby_jsonp',
     'c':    this.serverRoot + 'exec_c_jsonp',
     'cpp':  this.serverRoot + 'exec_cpp_jsonp',
+    'py3anaconda':  this.serverRoot + 'exec_pyanaconda_jsonp',
+  };
+
+  langSettingToJsonpEndpointBackup = {
+    '2':    null,
+    '3':    null,
+    'js':   this.backupHttpServerRoot + 'exec_js_jsonp',
+    'ts':   this.backupHttpServerRoot + 'exec_ts_jsonp',
+    'java': this.backupHttpServerRoot + 'exec_java_jsonp',
+    'ruby': this.backupHttpServerRoot + 'exec_ruby_jsonp',
+    'c':    this.backupHttpServerRoot + 'exec_c_jsonp',
+    'cpp':  this.backupHttpServerRoot + 'exec_cpp_jsonp',
+    'py3anaconda':  this.backupHttpServerRoot + 'exec_pyanaconda_jsonp',
   };
 
   abstract executeCode(forceStartingInstr?: number, forceRawInputLst?: string[]) : any;
@@ -99,22 +126,6 @@ export abstract class AbstractBaseFrontend {
   abstract handleUncaughtException(trace: any[]) : any; // called by executeCodeAndCreateViz
 
   constructor(params: any = {}) {
-    // OMG nasty wtf?!?
-    // From: http://stackoverflow.com/questions/21159301/quotaexceedederror-dom-exception-22-an-attempt-was-made-to-add-something-to-st
-    // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem
-    // throw QuotaExceededError. We're going to detect this and just silently drop any calls to setItem
-    // to avoid the entire page breaking, without having to do a check at each usage of Storage.
-    if (typeof localStorage === 'object') {
-      try {
-        localStorage.setItem('localStorage', '1');
-        localStorage.removeItem('localStorage');
-      } catch (e) {
-        (Storage as any).prototype._setItem = Storage.prototype.setItem;
-        Storage.prototype.setItem = function() {}; // make it a NOP
-        alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Some features may not work properly for you.');
-      }
-    }
-
     if (supports_html5_storage()) {
       // generate a unique UUID per "user" (as indicated by a single browser
       // instance on a user's machine, which can be more precise than IP
@@ -165,14 +176,14 @@ export abstract class AbstractBaseFrontend {
           this.num414Tries++;
           $("#executeBtn").click();
         } else {
-          this.num414Tries = 0;
-          this.setFronendError(["Server error! Your code might be too long for this tool. Shorten your code and re-try."]);
+          this.setFronendError(["Server error! Your code might be too long for this tool. Shorten your code and re-try. [#CodeTooLong]"]);
+          this.num414Tries = 0; // reset this to 0 AFTER setFronendError so that in setFronendError we can know that it's a 414 error (super hacky!)
         }
       } else {
         this.setFronendError(
-                        ["Server error! Your code might be taking too much time to run or using too much memory.",
-                         "Report a bug to philip@pgbovine.net by clicking the 'Generate permanent link' button",
-                         "at the bottom of this page and including a URL in your email."]);
+                        ["Server error! Your code might have an INFINITE LOOP or be running for too long.",
+                         "The server may also be OVERLOADED. Or you're behind a FIREWALL that blocks access.",
+                         "Try again later. This site is free with NO technical support. [#UnknownServerError]"]);
       }
       this.doneExecutingCode();
     });
@@ -190,8 +201,31 @@ export abstract class AbstractBaseFrontend {
   // TODO: override this with a version in codeopticon-learner.js if needed
   logEventCodeopticon(obj) { } // NOP
 
-  setFronendError(lines) {
-    $("#frontendErrorOutput").html(lines.map(htmlspecialchars).join('<br/>'));
+  getAppState() {return {};} // NOP -- subclasses need to override
+
+  setFronendError(lines, ignoreLog=false) {
+    $("#frontendErrorOutput").html(lines.map(htmlspecialchars).join('<br/>') +
+                                   (ignoreLog ? '' : '<p/>(' + unsupportedFeaturesStr + ')'));
+
+    // log it to the server as well (unless ignoreLog is on)
+    if (!ignoreLog) {
+      var errorStr = lines.join();
+
+      var myArgs = this.getAppState();
+      (myArgs as any).opt_uuid = this.userUUID;
+      (myArgs as any).session_uuid = this.sessionUUID;
+      (myArgs as any).error_msg = errorStr;
+
+      // very subtle! if you have a 414 error, that means your original
+      // code was too long to fit in the URL, so CLEAR THE FULL CODE from
+      // myArgs, or else it will generate a URL that will give a 414 again
+      // when you run error_log.py!!! this relies on this.num414Tries not
+      // being reset yet at this point:
+      if (this.num414Tries > 0) {
+        (myArgs as any).code = '#CodeTooLong: ' + String((myArgs as any).code.length) + ' bytes';
+      }
+      $.get('error_log.py', myArgs, function(dat) {}); // added this logging feature on 2018-02-18
+    }
   }
 
   clearFrontendError() {
@@ -212,6 +246,8 @@ export abstract class AbstractBaseFrontend {
             heapPrimitives: $.bbq.getState('heapPrimitives'),
             textReferences: $.bbq.getState('textReferences'),
             rawInputLst: ril ? $.parseJSON(ril) : undefined,
+            demoMode: $.bbq.getState('demo'), // is 'demo mode' on? if so, hide a lot of excess stuff
+            codcastFile: $.bbq.getState('codcast'), // load a codcast file created using ../recorder.html
             codeopticonSession: $.bbq.getState('cosession'),
             codeopticonUsername: $.bbq.getState('couser'),
             testCasesLst: testCasesLstJSON ? $.parseJSON(testCasesLstJSON) : undefined
@@ -236,7 +272,8 @@ export abstract class AbstractBaseFrontend {
 
   getBaseFrontendOptionsObj() {
     var ret = {// tricky: selector 'true' and 'false' values are strings!
-                disableHeapNesting: ($('#heapPrimitivesSelector').val() == 'true'),
+                disableHeapNesting: (($('#heapPrimitivesSelector').val() == 'true') ||
+                                     ($('#heapPrimitivesSelector').val() == 'nevernest')),
                 textualMemoryLabels: ($('#textualMemoryLabelsSelector').val() == 'true'),
                 executeCodeWithRawInputFunc: this.executeCodeWithRawInput.bind(this),
 
@@ -247,10 +284,14 @@ export abstract class AbstractBaseFrontend {
                 // this shouldn't lead to problems since only ONE
                 // ExecutionVisualizer will be shown at a time
                 visualizerIdOverride: '1',
-                updateOutputCallback: function() {$('#urlOutput,#embedCodeOutput').val('');},
+                updateOutputCallback: this.updateOutputCallbackFunc.bind(this),
                 startingInstruction: 0,
               };
     return ret;
+  }
+
+  updateOutputCallbackFunc() {
+    $('#urlOutput,#urlOutputShortened,#embedCodeOutput').val('');
   }
 
   executeCodeFromScratch() {
@@ -283,7 +324,6 @@ export abstract class AbstractBaseFrontend {
                           outputDiv) {
     var vizCallback = (dataFromBackend) => {
       var trace = dataFromBackend.trace;
-      var killerException = null;
       // don't enter visualize mode if there are killer errors:
       if (!trace ||
           (trace.length == 0) ||
@@ -291,16 +331,11 @@ export abstract class AbstractBaseFrontend {
         this.handleUncaughtException(trace);
 
         if (trace.length == 1) {
-          killerException = trace[0]; // killer!
           this.setFronendError([trace[0].exception_msg]);
         } else if (trace.length > 0 && trace[trace.length - 1].exception_msg) {
-          killerException = trace[trace.length - 1]; // killer!
           this.setFronendError([trace[trace.length - 1].exception_msg]);
         } else {
-          this.setFronendError(
-                          ["Unknown error. Reload the page and try again. Or report a bug to",
-                           "philip@pgbovine.net by clicking on the 'Generate permanent link'",
-                           "button at the bottom and including a URL in your email."]);
+          this.setFronendError(nullTraceErrorLst);
         }
       } else {
         // fail-soft to prevent running off of the end of trace
@@ -320,23 +355,6 @@ export abstract class AbstractBaseFrontend {
           this.finishSuccessfulExecution(); // TODO: should we also run this if we're calling runTestCaseCallback?
         }
       }
-
-      // do Codeopticon logging at the VERY END after the dust settles ...
-      // maybe move into opt-frontend.js?
-      // and don't do it for iframe-embed.js since getAppState doesn't
-      // work in that case ...
-      /*
-      if (this.originFrontendJsFile !== 'iframe-embed.js') {
-        this.logEventCodeopticon({type: 'doneExecutingCode',
-                  appState: this.getAppState(),
-                  // enough to reconstruct the ExecutionVisualizer object
-                  backendDataJSON: JSON.stringify(dataFromBackend), // for easier transport and compression
-                  frontendOptionsObj: frontendOptionsObj,
-                  backendOptionsObj: backendOptionsObj,
-                  killerException: killerException, // if there's, say, a syntax error
-                  });
-      }
-      */
     }
 
     this.executeCodeAndRunCallback(codeToExec,
@@ -352,6 +370,8 @@ export abstract class AbstractBaseFrontend {
                             backendOptionsObj, frontendOptionsObj,
                             execCallback) {
       var callbackWrapper = (dataFromBackend) => {
+        this.clearFrontendError(); // clear old errors first; execCallback may put in a new error:
+
         execCallback(dataFromBackend); // call the main event first
 
         // run this at the VERY END after all the dust has settled
@@ -365,10 +385,7 @@ export abstract class AbstractBaseFrontend {
       var jsonp_endpoint = this.langSettingToJsonpEndpoint[pyState]; // maybe null
 
       if (!backendScript) {
-        this.setFronendError(
-                        ["Server configuration error: No backend script",
-                         "Report a bug to philip@pgbovine.net by clicking on the 'Generate permanent link'",
-                         "button at the bottom and including a URL in your email."]);
+        this.setFronendError(["Server configuration error: No backend script"]);
         return;
       }
 
@@ -382,6 +399,7 @@ export abstract class AbstractBaseFrontend {
       } else if (pyState === '3') {
         frontendOptionsObj.lang = 'py3';
       } else if (pyState === 'java') {
+        // TODO: should we still keep this exceptional case?
         frontendOptionsObj.disableHeapNesting = true; // never nest Java objects, seems like a good default
       }
 
@@ -404,28 +422,130 @@ export abstract class AbstractBaseFrontend {
         }
       }
 
+      // if we can find a matching cache entry, then use it!!!
+      if (this.traceCache) {
+        var appState = this.getAppState();
+        var cachedTrace = this.traceCacheGet(appState);
+        if (cachedTrace) {
+          //console.log("CACHE HIT!", appState);
+          callbackWrapper({code: (appState as any).code, trace: cachedTrace});
+          return; // return early without going to the server at all!
+        }
+      }
+
+      // everything below here is an ajax (async) call to the server ...
       if (jsonp_endpoint) {
         assert (pyState !== '2' && pyState !== '3');
-        // hack! should just be a dummy script for logging only
+
+        // 2018-08-19: this is an uncommon use case (only used for https iframe embedding)
+        if (jsonp_endpoint.indexOf('https:') == 0) {
+            this.setFronendError(["Error: https execution of non-Python code is not currently supported. [#nonPythonHttps]"]);
+            this.doneExecutingCode();
+            return;
+        }
+
+        var retryOnBackupServer = () => {
+          // first log a #TryBackup error entry:
+          this.setFronendError(["Main server is busy or has errors; re-trying using backup server " + this.backupHttpServerRoot + " ... [#TryBackup]"]);
+
+          // now re-try the query using the backup server:
+          var backup_jsonp_endpoint = this.langSettingToJsonpEndpointBackup[pyState];
+          assert(backup_jsonp_endpoint);
+          $.ajax({
+            url: backup_jsonp_endpoint,
+            // The name of the callback parameter, as specified by the YQL service
+            jsonp: "callback",
+            dataType: "jsonp",
+            data: {user_script : codeToExec,
+                   options_json: JSON.stringify(backendOptionsObj),
+                   raw_input_json: this.rawInputLst.length > 0 ? JSON.stringify(this.rawInputLst) : null,
+                  },
+            success: callbackWrapper
+          });
+        }
+
+        // for non-python, this should be a dummy script for logging
+        // only, and to check whether there's a 414 error for #CodeTooLong
         $.get(backendScript,
               {user_script : codeToExec,
                options_json: JSON.stringify(backendOptionsObj),
                user_uuid: this.userUUID,
                session_uuid: this.sessionUUID,
                diffs_json: deltaObjStringified},
-               function(dat) {} /* don't do anything since this is a dummy call */, "text");
+               (dat) => {
+                // this is super important! only if this first call is a
+                // SUCCESS do we actually make the REAL call using JSONP.
+                // the reason why is that we might get a 414 error for
+                // #CodeTooLong if we try to execute this code, in which
+                // case we want to either re-try or bail out. this also
+                // keeps the control flow synchronous. we always try
+                // the original backendScript, and then we try
+                // jsonp_endpoint only if that's successful:
 
-        // the REAL call uses JSONP
-        // http://learn.jquery.com/ajax/working-with-jsonp/
-        $.ajax({
-          url: jsonp_endpoint,
-          // The name of the callback parameter, as specified by the YQL service
-          jsonp: "callback",
-          dataType: "jsonp",
-          data: {user_script : codeToExec,
-                 options_json: JSON.stringify(backendOptionsObj)},
-          success: callbackWrapper,
-        });
+                // the REAL call uses JSONP
+                // http://learn.jquery.com/ajax/working-with-jsonp/
+                $.ajax({
+                  url: jsonp_endpoint,
+
+                  // for testing
+                  //url: 'http://cokapi.com/test_failure_jsonp',
+                  //url: 'http://cokapi.com/unknown_url',
+
+                  // The name of the callback parameter, as specified by the YQL service
+                  jsonp: "callback",
+                  dataType: "jsonp",
+                  data: {user_script : codeToExec,
+                         options_json: JSON.stringify(backendOptionsObj),
+                         raw_input_json: this.rawInputLst.length > 0 ? JSON.stringify(this.rawInputLst) : null,
+                        },
+                  success: (dataFromBackend) => {
+                    var trace = dataFromBackend.trace;
+                    var shouldRetry = false;
+
+                    // the cokapi backend responded successfully, but the
+                    // backend may have issued an error. if so, then
+                    // RETRY with backupHttpServerRoot. otherwise let it
+                    // through to callbackWrapper
+                    if (!trace ||
+                        (trace.length == 0) ||
+                        (trace[trace.length - 1].event == 'uncaught_exception')) {
+                      if (trace.length == 1) {
+                        // we should only retry if there's a legit
+                        // backend error and not just a syntax error:
+                        var msg = trace[0].exception_msg;
+                        if (msg.indexOf('#BackendError') >= 0) {
+                          shouldRetry = true;
+                        }
+                      } else {
+                        shouldRetry = true;
+                      }
+                    }
+
+                    // don't bother re-trying for https since we don't
+                    // currently have an https backup server
+                    if (window.location.protocol === 'https:') {
+                      shouldRetry = false;
+                    }
+
+                    if (shouldRetry) {
+                      retryOnBackupServer();
+                    } else {
+                      // accept our fate without retrying
+                      callbackWrapper(dataFromBackend);
+                    }
+                  },
+                  // if there's a server error, then ALWAYS retry:
+                  error: (jqXHR, textStatus, errorThrown) => {
+                    retryOnBackupServer();
+                    // use 'global: false;' below to NOT run the generic ajaxError() function
+                  },
+
+                  global: false, // VERY IMPORTANT! do not call the generic ajaxError() function when there's an error;
+                                 // only call our error handler above; http://api.jquery.com/ajaxerror/
+                });
+
+               }, "text");
+
       } else {
         // for Python 2 or 3, directly execute backendScript
         assert (pyState === '2' || pyState === '3');
@@ -440,10 +560,79 @@ export abstract class AbstractBaseFrontend {
       }
   }
 
+
+  // manage traceCache
+
+  // return whether two states match, except don't worry about mode or curInstr
+  static appStateEqForCache(s1, s2) {
+    // NB: this isn't always true if we're recording and replaying
+    // in different frontend files ...
+    //assert(s1.origin == s2.origin); // sanity check!
+    return (s1.code == s2.code &&
+            s1.cumulative == s2.cumulative &&
+            s1.heapPrimitives == s1.heapPrimitives &&
+            s1.textReferences == s2.textReferences &&
+            s1.py == s2.py &&
+            s1.rawInputLstJSON == s2.rawInputLstJSON);
+  }
+
+  // SILENTLY fail without doing anything if the current app state is
+  // already in the cache
+  traceCacheAdd() {
+    // should only be called if you currently have a working trace;
+    // otherwise it's useless
+    assert(this.myVisualizer && this.myVisualizer.curTrace);
+    var appState = this.getAppState();
+
+    // make sure nothing in the cache currently matches appState
+    for (var i = 0; i < this.traceCache.length; i++) {
+      var e = this.traceCache[i];
+      if (AbstractBaseFrontend.appStateEqForCache(e[0], appState)) {
+        console.warn("traceCacheAdd silently failed, entry already in cache");
+        return;
+      }
+    }
+
+    this.traceCache.push([appState, this.myVisualizer.curTrace]);
+    console.log('traceCacheAdd', this.traceCache);
+  }
+
+  traceCacheGet(appState) {
+    for (var i = 0; i < this.traceCache.length; i++) {
+      var e = this.traceCache[i];
+      if (AbstractBaseFrontend.appStateEqForCache(e[0], appState)) {
+        return e[1];
+      }
+    }
+    return null;
+  }
+
+  traceCacheClear() {
+    this.traceCache = [];
+  }
+
   setSurveyHTML() {
-    $('#surveyPane').html(survey_v9);
+    // use ${this.userUUID} within the string ...
+    var survey_v14 = `
+    <p style="font-size: 9pt; margin-top: 12px; margin-bottom: 15px; line-height: 150%;">
+
+    <a style="font-size: 10pt; font-weight: bold;" href="http://pgbovine.net/support.htm" target="_blank">Donate</a> to help keep this website up and running
+    <br/>
+    Fill out a <a style="font-weight: bold;" href="https://docs.google.com/forms/d/e/1FAIpQLSfQJP1ojlv8XzXAvHz0al-J_Hs3GQu4XeblxT8EzS8dIzuaYA/viewform?entry.956368502=${this.userUUID}" target="_blank">short user survey</a> to support our research
+    </p>`;
+    $('#surveyPane').html(survey_v14);
   }
 } // END class AbstractBaseFrontend
+
+
+// removed donation link on 2019-03-26
+//    Keep this tool free by making a <a style="font-size: 10pt; font-weight: bold;" href="http://pgbovine.net/support.htm" target="_blank">small donation</a> (PayPal, Patreon, credit/debit card)
+//
+// re-added a new donation link on 2020-05-19 ...
+//    <a style="font-size: 10pt; font-weight: bold;" href="http://pgbovine.net/support.htm" target="_blank">Donate</a> to keep this tool free and available for everyone (no new features, though)
+//
+// tweaked the wording on 2020-05-30 ...
+//    <a style="font-size: 10pt; font-weight: bold;" href="http://pgbovine.net/support.htm" target="_blank">Donate</a> to help keep this website up and running
 
 
 /* For survey questions. Versions of survey wording:
@@ -458,12 +647,60 @@ const survey_v8 = '\n\
 <span style="font-size: 9pt;">If you are <b>at least 60 years old</b>, please also fill out <a href="https://docs.google.com/forms/d/1lrXsE04ghfX9wNzTVwm1Wc6gQ5I-B4uw91ACrbDhJs8/viewform" target="_blank">our survey about learning programming</a>.</span>\n\
 </p>'
 
-v9: (deployed on 2016-08-14) - only put up the "older adults" survey except generalize it to ALL ages, take down the OPT usage survey for now
-*/
+v9: (deployed on 2016-08-14, taken down 2016-12-05) - only put up the "older adults" survey except generalize it to ALL ages, take down the OPT usage survey for now
 const survey_v9 = '\n\
 <p style="font-size: 10pt; margin-top: 10px; margin-bottom: 15px; line-height: 175%;">\n\
 <span>Support our research and keep this tool free by <a href="https://docs.google.com/forms/d/1lrXsE04ghfX9wNzTVwm1Wc6gQ5I-B4uw91ACrbDhJs8/viewform" target="_blank"><b>filling out this user survey</b></a>.</span>\n\
 </p>'
+
+v10: (deployed on 2016-12-05) - survey of how native languages affects learning programming
+     (taken down on 2017-07-28)
+[see survey_v10 variable above]
+
+    // use ${this.userUUID} within the string ...
+    var survey_v10 = '\n\
+    <p style="font-size: 11pt; margin-top: 12px; margin-bottom: 15px; line-height: 150%;">\n\
+    <span><span style="color: #e93f34;">Support our research and keep this tool free</span> by filling out this <a href="https://docs.google.com/forms/d/e/1FAIpQLSe48NsBZPvu1hrTBwc8-aSic7nPSxpsxFqpUxV5AN4LwnyJWg/viewform?entry.956368502=';
+    survey_v10 += this.userUUID;
+    survey_v10 += '" target="_blank">survey on how your native spoken language affects how you learn programming</a>.</span></p>';
+
+    $('#surveyPane').html(survey_v10);
+
+v11: labinthewild python debugging experiment (deployed on 2017-07-28, taken down on 2017-09-12)
+    var survey_v11 = `<p style="font-size: 10pt; margin-top: 12px; margin-bottom: 15px; line-height: 150%;">
+                        <span>
+                          <span style="color: #e93f34;">Support our research and practice Python</span>
+                          by trying our new
+                          <a target="_blank" href="http://www.labinthewild.org/studies/python_tutor/">debugging skill test</a>!`;
+
+v12: simplified demographic survey which is a simplified hybrid of the v8 general usage survey and the v10 native language survey (deployed on 2017-09-12)
+
+    // use ${this.userUUID} within the string ...
+    var survey_v12 = '\n\
+    <p style="font-size: 10pt; margin-top: 12px; margin-bottom: 15px; line-height: 150%;">\n\
+    <span>Support our research and keep this tool free by <a href="https://docs.google.com/forms/d/e/1FAIpQLSfQJP1ojlv8XzXAvHz0al-J_Hs3GQu4XeblxT8EzS8dIzuaYA/viewform?entry.956368502=';
+    survey_v12 += this.userUUID;
+    survey_v12 += '" target="_blank"><b>filling out this short user survey</b></a>.</span></p>';
+
+v13: same as v12 except with slightly different wording, and adding a
+call for donations (deployed on 2017-12-27)
+
+    // use ${this.userUUID} within the string ...
+    var survey_v13 = '\n\
+    <p style="font-size: 10pt; margin-top: 12px; margin-bottom: 15px; line-height: 150%;">\n\
+    <div style="margin-bottom: 12px;">Keep this tool free for everyone by <a href="http://pgbovine.net/support.htm" target="_blank"><b>making a small donation</b></a> <span style="font-size: 8pt;">(PayPal, Patreon, credit/debit card)</span></div>\
+    <span>Support our research by completing a <a href="https://docs.google.com/forms/d/e/1FAIpQLSfQJP1ojlv8XzXAvHz0al-J_Hs3GQu4XeblxT8EzS8dIzuaYA/viewform?entry.956368502=';
+    survey_v13 += this.userUUID;
+    survey_v13 += '" target="_blank"><b>short user survey</b></a></span></p>';
+
+
+v14: very similar to v13 (deployed on 2018-03-11)
+[see the survey_v14 variable]
+survey text:
+
+Help improve this tool by completing a <a style="font-size: 10pt; font-weight: bold;" href="https://docs.google.com/forms/d/e/1FAIpQLSfQJP1ojlv8XzXAvHz0al-J_Hs3GQu4XeblxT8EzS8dIzuaYA/viewform?entry.956368502=${this.userUUID}" target="_blank">short user survey</a>
+
+*/
 
 // misc utilities:
 
@@ -478,10 +715,21 @@ export function generateUUID(){
     return uuid;
 };
 
-// From http://diveintohtml5.info/storage.html
+// Adapted from http://diveintohtml5.info/storage.html
 export function supports_html5_storage() {
   try {
-    return 'localStorage' in window && window['localStorage'] !== null;
+    if ('localStorage' in window && window['localStorage'] !== null) {
+      // From: http://stackoverflow.com/questions/21159301/
+      // Safari before v11, in Private Browsing Mode, looks like it supports localStorage but all calls to
+      // setItem throw QuotaExceededError.  Making these calls in the try block will detect that situation
+      // with the catch below, returning false.
+      localStorage.setItem('_localStorage_test', '1');
+      localStorage.removeItem('_localStorage_test');
+      return true;
+    }
+    else {
+      return false;
+    }
   } catch (e) {
     return false;
   }

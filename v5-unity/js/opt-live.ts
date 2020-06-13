@@ -13,8 +13,8 @@
 
 /* TODOs:
 
-- get shared sessions working here after refactoring ... it kinda almost
-  works right now
+- use a backup execution server for JS (via backupHttpServerRoot) just
+  like we do in opt-frontend-common.ts
 
 - abstract out components within pytutor.js to prevent ugly code
   duplication with stuff in this file
@@ -24,6 +24,8 @@
 
 - [later] add a codeopticon-style history slider of the user's past
   edits (but that might be confusing)
+  - NB: now we kind of already have this if you're in a shared session
+    with 'undo' and 'redo' buttons
 
 - [later] detect exact position of syntax error and put a squiggly line below
   it with something like:
@@ -40,17 +42,24 @@ require('../css/opt-frontend.css');
 require('../css/opt-live.css');
 
 // need to directly import the class for type checking to work
-import {OptFrontend} from './opt-frontend.ts';
-import {ExecutionVisualizer, assert, brightRed, darkArrowColor, lightArrowColor, SVG_ARROW_POLYGON, htmlspecialchars} from './pytutor.ts';
+
+// 2019-04-09: disabled shared sessions in opt-live.ts
+//import {OptFrontendSharedSessions,TogetherJS} from './opt-shared-sessions';
+
+import {OptFrontend} from './opt-frontend';
+import {ExecutionVisualizer, assert, brightRed, darkArrowColor, lightArrowColor, SVG_ARROW_POLYGON, htmlspecialchars} from './pytutor';
+import {eureka_survey,eureka_prompt,eureka_survey_version} from './surveys';
+import {allTabsRE} from './opt-frontend';
+import {privacyAndEndingHTML,nullTraceErrorLst,unsupportedFeaturesStr} from './footer-html';
 
 // just punt and use global script dependencies
-require("script!./lib/ace/src-min-noconflict/ace.js");
-require('script!./lib/ace/src-min-noconflict/mode-python.js');
-require('script!./lib/ace/src-min-noconflict/mode-javascript.js');
-require('script!./lib/ace/src-min-noconflict/mode-typescript.js');
-require('script!./lib/ace/src-min-noconflict/mode-c_cpp.js');
-require('script!./lib/ace/src-min-noconflict/mode-java.js');
-require('script!./lib/ace/src-min-noconflict/mode-ruby.js');
+require("script-loader!./lib/ace/src-min-noconflict/ace.js");
+require('script-loader!./lib/ace/src-min-noconflict/mode-python.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-javascript.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-typescript.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-c_cpp.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-java.js');
+require('script-loader!./lib/ace/src-min-noconflict/mode-ruby.js');
 
 
 var optLiveFrontend: OptLiveFrontend;
@@ -76,13 +85,14 @@ export class OptLiveFrontend extends OptFrontend {
     'ruby': 'LIVE_exec_ruby.py',
     'c':   'LIVE_exec_c.py',
     'cpp': 'LIVE_exec_cpp.py',
+    'py3anaconda': 'LIVE_exec_py3anaconda.py',
   };
 
   constructor(params) {
     super(params);
 
     $('#legendDiv')
-      .append('<svg id="prevLegendArrowSVG"/> line that has just executed')
+      .append('<svg id="prevLegendArrowSVG"/> line that just executed')
       .append('<p style="margin-top: 4px"><svg id="curLegendArrowSVG"/> next line to execute</p>');
 
     d3.select('svg#prevLegendArrowSVG')
@@ -121,6 +131,49 @@ export class OptLiveFrontend extends OptFrontend {
     $("#jmpStepFwd").click(() => {
       if (this.myVisualizer) {this.myVisualizer.stepForward();}
     });
+
+    // taken down on 2019-10-19 because i really haven't looked at the data for a long time; see surveys.ts
+    // put eureka_survey into #eurekaSurveyPane so that it's highly visible
+    /*
+    $("#eurekaSurveyPane").append(eureka_survey);
+    var that = this;
+    $('.surveyBtnBig').click(function(e) {
+      var myArgs = that.getAppState();
+      var buttonPrompt = $(this).html();
+      var res = prompt(eureka_prompt);
+      // don't do ajax call when Cancel button is pressed
+      // (note that if OK button is pressed with no response, then an
+      // empty string will still be sent to the server)
+      if (res !== null) {
+        (myArgs as any).surveyVersion = eureka_survey_version;
+        (myArgs as any).surveyQuestion = buttonPrompt;
+        (myArgs as any).surveyResponse = res;
+        (myArgs as any).opt_uuid = that.userUUID;
+        (myArgs as any).session_uuid = that.sessionUUID;
+        $.get('eureka_survey.py', myArgs, function(dat) {});
+      }
+    });
+    */
+
+    $("#footer").append(privacyAndEndingHTML);
+  }
+
+  demoModeChanged() {
+    super.demoModeChanged(); // call first
+    if (this.demoMode) {
+      $("#eurekaSurveyPane,#surveyPane,#liveModeHeader").hide();
+    }
+  }
+
+  // override verison in opt-frontend.ts
+  setAceMode() {
+    var v = $('#pythonVersionSelector').val();
+    if (v !== 'js' && v !== '2' && v !== '3') {
+      // we don't support live mode for this value of v, so set it to
+      // python 2 by default
+      $('#pythonVersionSelector').val('2');
+    }
+    super.setAceMode(); // delegate!
   }
 
   toggleSyntaxError(x) {
@@ -151,7 +204,7 @@ export class OptLiveFrontend extends OptFrontend {
     assert(myVisualizer);
     myVisualizer.updateLineAndExceptionInfo(); // do this first to update the right fields
 
-    $('#urlOutput').val(''); // prevent stale URLs
+    $('#urlOutput,#urlOutputShortened').val(''); // prevent stale URLs
 
     var s = this.pyInputAceEditor.getSession();
     this.allMarkerIds.forEach((e) => {
@@ -164,9 +217,9 @@ export class OptLiveFrontend extends OptFrontend {
     var isLastInstr = myVisualizer.curInstr === (totalInstrs-1);
     if (isLastInstr) {
       if (myVisualizer.promptForUserInput || myVisualizer.promptForMouseInput) {
-        $("#curInstr").html('<b><font color="' + brightRed + '">Enter user input below:</font></b>');
+        $("#curInstr").html('<b><font color="' + brightRed + '">Enter user input:</font></b>');
       } else if (myVisualizer.instrLimitReached) {
-        $("#curInstr").html("Instruction limit reached");
+        $("#curInstr").html("Step limit reached");
       } else {
         $("#curInstr").html("Done running (" + String(totalInstrs-1) + " steps)");
       }
@@ -187,6 +240,13 @@ export class OptLiveFrontend extends OptFrontend {
       ruiDiv.find('#raw_input_submit_btn')
         .unbind('click')
         .click(() => {
+          // issue a warning since it's really hard to get rawInputLst
+          // stuff sync'ed when TogetherJS is running for various reasons:
+          /* 2019-04-09: disabled shared sessions in opt-live.ts
+          if (TogetherJS.running) {
+            alert("Warning: user inputs do NOT work well in live help/chat mode. We suggest you use the regular Python Tutor visualizer instead.");
+          }
+          */
           var userInput = ruiDiv.find('#raw_input_textbox').val();
           var myVisualizer = this.myVisualizer;
           // advance instruction count by 1 to get to the NEXT instruction
@@ -202,9 +262,10 @@ export class OptLiveFrontend extends OptFrontend {
         curEntry.event === 'uncaught_exception') {
       assert(curEntry.exception_msg);
       if (curEntry.exception_msg == "Unknown error") {
-        $("#frontendErrorOutput").html('Unknown error: Please email a bug report to philip@pgbovine.net');
+        $("#frontendErrorOutput").html('Unknown error: ' + unsupportedFeaturesStr);
+
       } else {
-        $("#frontendErrorOutput").html(htmlspecialchars(curEntry.exception_msg));
+        $("#frontendErrorOutput").html(htmlspecialchars(curEntry.exception_msg) + '<p/>(' + unsupportedFeaturesStr + ')');
       }
 
       if (myVisualizer.curLineNumber) {
@@ -214,7 +275,7 @@ export class OptLiveFrontend extends OptFrontend {
         this.allMarkerIds.push(markerId);
       }
     } else if (myVisualizer.instrLimitReached) {
-      $("#frontendErrorOutput").html(htmlspecialchars(myVisualizer.instrLimitReachedWarningMsg));
+      $("#frontendErrorOutput").html(htmlspecialchars(myVisualizer.instrLimitReachedWarningMsg) + '<p/>(' + unsupportedFeaturesStr + ')');
     } else {
       $("#frontendErrorOutput").html(''); // clear it
     }
@@ -268,7 +329,7 @@ export class OptLiveFrontend extends OptFrontend {
     var myVisualizer = this.myVisualizer;
     var prevVisualizer = this.prevVisualizer;
     assert(myVisualizer);
-    $("#pyOutputPane,#vcrControls").show();
+    $("#pyOutputPane,#vcrControls,#curInstr").show();
     this.doneExecutingCode();
 
     this.toggleSyntaxError(false);
@@ -347,6 +408,18 @@ export class OptLiveFrontend extends OptFrontend {
     myVisualizer.add_pytutor_hook(
       "end_updateOutput",
       (args) => {
+        /* 2019-04-09: disabled shared sessions in opt-live.ts
+        // adapted from opt-shared-sessions.ts to handle TogetherJS
+        if (this.updateOutputSignalFromRemote) {
+          return [true]; // die early; no more hooks should run after this one!
+        }
+
+        if (TogetherJS.running) {
+          TogetherJS.send({type: "updateOutput", step: args.myViz.curInstr});
+        }
+        */
+
+
         // copied from opt-frontend-common.js
         if (args.myViz.creationTime) {
           var curTs = new Date().getTime();
@@ -395,6 +468,13 @@ export class OptLiveFrontend extends OptFrontend {
     }
   }
 
+  // need to override the version in opt-frontend-common.ts
+  redrawConnectors() {
+    if (this.myVisualizer) {
+      this.myVisualizer.redrawConnectors();
+    }
+  }
+
   // override with NOP to disable diff snapshots in live mode
   snapshotCodeDiff() { }
 
@@ -433,6 +513,17 @@ export class OptLiveFrontend extends OptFrontend {
     });
 
     this.pyInputAceEditor.on('change', (e) => {
+      // 2017-11-21: convert all tabs to 4 spaces so that when you paste
+      // in code from somewhere else that contains tabs, instantly
+      // change all those tabs to spaces. note that all uses of 'tab' key
+      // within the Ace editor on this page will result in spaces (i.e.,
+      // "soft tabs")
+      var curVal = this.pyInputGetValue();
+      if (curVal.indexOf('\t') >= 0) {
+        this.pyInputSetValue(curVal.replace(allTabsRE, '    '));
+        console.log("Converted all tabs to spaces");
+      }
+
       $.doTimeout('pyInputAceEditorChange',
                   500, /* go a bit faster than CODE_SNAPSHOT_DEBOUNCE_MS to feel more snappy */
                   () => {
@@ -440,6 +531,14 @@ export class OptLiveFrontend extends OptFrontend {
                       this.executeCode(this.preseededCurInstr);
                       this.preseededCurInstr = undefined; // do this only once, then unset it
                     } else {
+                      // if you're trying to execute an empty text
+                      // buffer, highlight the code display with a
+                      // warning as though you got a syntax error:
+                      if (this.pyInputAceEditor && $.trim(this.pyInputGetValue()) == '') {
+                        this.toggleSyntaxError(true);
+                        this.myVisualizer.redrawConnectors();
+                      }
+
                       this.executeCodeFromScratch();
                     }
                   }); // debounce
@@ -487,9 +586,7 @@ export class OptLiveFrontend extends OptFrontend {
         } else if (trace.length > 0 && trace[trace.length - 1].exception_msg) {
           this.setFronendError([trace[trace.length - 1].exception_msg]);
         } else {
-          this.setFronendError(["Unknown error. Reload the page and try again. Or report a bug to",
-                                "philip@pgbovine.net by clicking on the 'Generate permanent link'",
-                                "button at the bottom and including a URL in your email."]);
+          this.setFronendError(nullTraceErrorLst);
         }
       } else {
         this.prevVisualizer = this.myVisualizer;
@@ -505,7 +602,7 @@ export class OptLiveFrontend extends OptFrontend {
     this.clearFrontendError();
     this.startExecutingCode();
 
-    this.setFronendError(['Running your code ...']);
+    this.setFronendError(['Running your code ...'], true);
 
     var backendScript = this.langSettingToBackendScript[pyState];
     assert(backendScript);
@@ -517,7 +614,11 @@ export class OptLiveFrontend extends OptFrontend {
       frontendOptionsObj.lang = 'py3';
     } else if (pyState === 'js') {
       frontendOptionsObj.lang = 'js';
-      jsonp_endpoint = this.langSettingToJsonpEndpoint[pyState]; // maybe null
+
+      // only set the remote endpoint if you're *not* on localhost:
+      if (window.location.href.indexOf('localhost') < 0) {
+        jsonp_endpoint = this.langSettingToJsonpEndpoint[pyState]; // maybe null
+      }
     } else {
       assert(false);
     }
@@ -558,18 +659,39 @@ export class OptLiveFrontend extends OptFrontend {
                options_json: JSON.stringify(backendOptionsObj)},
         success: execCallback,
       });
+
+      // TODO: we currently don't use backupHttpServerRoot like we do in opt-frontend-common.ts
+      // maybe we should add support for it here too
     } else {
-      // for Python 2 or 3, directly execute backendScript
-      assert (pyState === '2' || pyState === '3');
-      $.get(backendScript,
-            {user_script : codeToExec,
-             raw_input_json: this.rawInputLst.length > 0 ? JSON.stringify(this.rawInputLst) : '',
-             options_json: JSON.stringify(backendOptionsObj),
-             user_uuid: this.userUUID,
-             session_uuid: this.sessionUUID,
-             prevUpdateHistoryJSON: prevUpdateHistoryJSON,
-             exeTime: new Date().getTime()},
-             execCallback, "json");
+      if (pyState === '2' || pyState === '3') {
+        $.get(backendScript,
+              {user_script : codeToExec,
+               raw_input_json: this.rawInputLst.length > 0 ? JSON.stringify(this.rawInputLst) : '',
+               options_json: JSON.stringify(backendOptionsObj),
+               user_uuid: this.userUUID,
+               session_uuid: this.sessionUUID,
+               prevUpdateHistoryJSON: prevUpdateHistoryJSON,
+               exeTime: new Date().getTime()},
+               execCallback, "json");
+      } else if (pyState === 'js') {
+        if (window.location.href.indexOf('localhost') >= 0) {
+          // use /exec_js_native if you're running on localhost:
+          // (need to first run 'make local' from ../../v4-cokapi/Makefile)
+          $.get('http://localhost:3000/exec_js_native',
+                {user_script : codeToExec,
+                 raw_input_json: this.rawInputLst.length > 0 ? JSON.stringify(this.rawInputLst) : '',
+                 options_json: JSON.stringify(backendOptionsObj),
+                 user_uuid: this.userUUID,
+                 session_uuid: this.sessionUUID,
+                 prevUpdateHistoryJSON: prevUpdateHistoryJSON,
+                 exeTime: new Date().getTime()},
+                 execCallback, "json");
+        } else {
+          assert(false);
+        }
+      } else {
+        assert(false);
+      }
     }
   }
 
@@ -580,15 +702,31 @@ export class OptLiveFrontend extends OptFrontend {
     return ret;
   }
 
+
+  /* 2019-04-09: disabled shared sessions in opt-live.ts
+  // for shared sessions
+  TogetherjsReadyHandler() {
+    $("#liveModeHeader").hide();
+    super.TogetherjsReadyHandler();
+  }
+
+  TogetherjsCloseHandler() {
+    $("#liveModeHeader").show();
+    super.TogetherjsCloseHandler();
+  }
+
+  updateOutputTogetherJsHandler(msg) {
+    super.updateOutputTogetherJsHandler(msg); // do this first
+    // then update slider at the end
+    $('#executionSlider').slider('value', this.myVisualizer.curInstr); // update slider
+    this.updateStepLabels();
+  }
+  */
+
 } // END class OptLiveFrontend
 
 
 $(document).ready(function() {
-  optLiveFrontend = new OptLiveFrontend({
-                                  /*TogetherjsReadyHandler: optFrontendTogetherjsReadyHandler,
-                                    TogetherjsCloseHandler: optFrontendTogetherjsCloseHandler,
-                                    startSharedSession: optFrontendStartSharedSession,
-                                  */
-                                });
-
+  optLiveFrontend = new OptLiveFrontend({});
+  //optLiveFrontend.setSurveyHTML(); // 2019-04-09 take survey off this page
 });
