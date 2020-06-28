@@ -1,3 +1,5 @@
+This document is deprecated as of 2020-06-28: [this file](https://github.com/pythontutor-dev/pythontutor/blob/master/unsupported-features.md) contains the latest updates.
+
 ## Python Tutor's server and live chat service may go down at any time and lose your code! There is NO on-call technical support available.
 
 This free website is maintained by one volunteer in my spare time, so I'm unable to respond to most requests. Your issue is probably listed here. If you're sure it's not here, file a GitHub issue and use the "Generate permanent link" button to include a URL of your code. **I only consider credible and reproducible bug reports that show the visualizer doing something clearly incorrect.** I have no time for feature requests.
