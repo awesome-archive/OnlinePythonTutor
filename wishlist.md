@@ -38,7 +38,7 @@ First read the [**unsupported features doc**](unsupported-features.md#read-this-
   - this likely involves analyzing both the static code *and* the dynamic execution trace
   - a much easier stopgap solution is to warn the user if their code exceeds, say, 1500 bytes or 100 steps, by [linking to here](https://github.com/pgbovine/OnlinePythonTutor/blob/master/unsupported-features.md#read-this-first)
 - flipping back-and-forth between edit and visualize modes can be annoying when the code is very long; would be nice to save the vertical scroll position in the editor so the user can easily jump back to editing where they left off
-  - related: whatever line you're currently seeing in the visualizer, when you switch back to editor jump directly to that line ([GitHub Issue](https://github.com/pgbovine/OnlinePythonTutor/issues/253))
+  - related: whatever line you're currently seeing in the visualizer, when you switch back to editor jump directly to that line ([GitHub Issue](https://github.com/pythontutor-dev/pythontutor/issues/67))
   - (these issues will disappear if we unify the regular and live programming UIs!)
 - IDE-like features like tab completion, code folding, etc.
 - exposing a slider for undo/redo of edits; we already have undo/redo buttons in live help mode, so maybe extend that to always be activated
@@ -78,7 +78,7 @@ First read the [**unsupported features doc**](unsupported-features.md#read-this-
     - one far-out idea for synchronizing in shared sessions is to send YOUR trace to the other parties after you execute; that way, everyone is guaranteed to be using the same trace with the same object IDs. right now everyone runs code independently and generates their own traces. (actually this might lighten the load on the execution servers a bit since code only needs to be executed ONCE, not N times like it is now if there are N users in a session!)
 - hover over stack frames and then highlight the code that contains the call site of each frame
   - (more generally, think about other hover-based cross-linking of compile- and run-time information in visualizations)
-- more detailed visualizations of data structure element accesses or slices ([GitHub Issue](https://github.com/pgbovine/OnlinePythonTutor/issues/185))
+- more detailed visualizations of data structure element accesses or slices ([GitHub Issue](https://github.com/pythontutor-dev/pythontutor/issues/65))
 - displaying large data structures by summarizing or truncating them (e.g., [1, 2, ..., 999, 1000]), with clickable expansions
   - more generally, think about semantic zooming, overview+detail, or Table Lens (see Pirolli, Card, et al.)
   - could summarize as data visualizations like sparklines or summary tables (e.g., counts of commonly-occurring values)
@@ -143,7 +143,7 @@ First read the [**unsupported features doc**](unsupported-features.md#read-this-
 These features deal with the server-side backends that run the user's code.
 
 - upgrade language backends to newer versions of compilers/interpreters (doable but tedious since I need to re-test the backends with new language versions, which could surface subtle bugs)
-- if there's an infinite loop (or execution runs too long), still trace and render the first 1,000 steps instead of just returning an error, so users can see which parts of their code led to the too-long execution ([GitHub Issue](https://github.com/pgbovine/OnlinePythonTutor/issues/265))
+- if there's an infinite loop (or execution runs too long), still trace and render the first 1,000 steps instead of just returning an error, so users can see which parts of their code led to the too-long execution
 - implement *backend* breakpoints (like the Python #break annotation) for all other languages, so that overly-long execution traces don't get generated even for larger pieces of code
   - right now there are breakpoints in the frontend, but that doesn't help when the backend already executes for > 1,000 steps; we need breakpoints in the backend (likely implemented as comment annotations or GUI clicks in the code editor gutter) to really clamp down on overly-long executions
 - similarly, implement variable watches or ignores in the backend so that we can specify what variables we care about (or don't care about) visualizing; again, we can do this in the frontend, but if we do this in the backend, it will *drastically* cut down on the sizes of traces and allow users to visualize much more code
