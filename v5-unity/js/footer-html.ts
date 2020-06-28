@@ -18,7 +18,7 @@ appropriate academic integrity standards.</p>`;
 
 
 export var footerHtml = `
-<p style="margin-top: 20px; margin-bottom: 30px;"><a href="https://github.com/pgbovine/OnlinePythonTutor/blob/master/unsupported-features.md" target="_blank">unsupported features</a> |
+<p style="margin-top: 20px; margin-bottom: 30px;"><a href="https://github.com/pythontutor-dev/pythontutor/blob/master/unsupported-features.md" target="_blank">unsupported features</a> |
 <a href="https://www.youtube.com/watch?v=80ztTXP90Vs&list=PLzV58Zm8FuBL2WxxZKGZ6j1dH8NKb_HYI&index=5" target="_blank">setting breakpoints</a> |
 <a href="https://www.youtube.com/watch?v=Mxt9HZWgwAM&list=PLzV58Zm8FuBL2WxxZKGZ6j1dH8NKb_HYI&index=6" target="_blank">hiding variables</a> |
 <a href="https://www.youtube.com/watch?v=JjGt95Te0wo&index=3&list=PLzV58Zm8FuBL2WxxZKGZ6j1dH8NKb_HYI" target="_blank">live programming</a>
@@ -36,7 +36,7 @@ export var footerHtml = `
 </div>
 
 <p style="margin-top: 25px;">
-<a href="http://pythontutor.com/">Python Tutor</a> (<a href="https://github.com/pgbovine/OnlinePythonTutor">code on GitHub</a>) supports:
+<a href="http://pythontutor.com/">Python Tutor</a> supports:
 
 Python <a href="https://docs.python.org/3.6/">3.6</a> and <a
 href="https://docs.python.org/2.7/">2.7</a> with limited imports
@@ -69,4 +69,4 @@ export var nullTraceErrorLst = [
   "Try again later. This site is free with NO available technical support. [#NullTrace]"
 ];
 
-export var unsupportedFeaturesStr = 'see <a target="_blank" href="https://github.com/pgbovine/OnlinePythonTutor/blob/master/unsupported-features.md">UNSUPPORTED FEATURES</a>';
+export var unsupportedFeaturesStr = 'see <a target="_blank" href="https://github.com/pythontutor-dev/pythontutor/blob/master/unsupported-features.md">UNSUPPORTED FEATURES</a>';

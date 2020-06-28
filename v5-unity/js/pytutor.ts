@@ -3878,13 +3878,13 @@ class CodeDisplay {
         if (this.owner.params.embeddedMode) {
           this.domRoot.find('#langDisplayDiv').html('C (gcc 4.8, C11)');
         } else {
-          this.domRoot.find('#langDisplayDiv').html('C (gcc 4.8, C11)<br/><font color="#e93f34">EXPERIMENTAL!</font> <a href="https://github.com/pgbovine/OnlinePythonTutor/blob/master/unsupported-features.md#c-and-c-unsupported-features" target="_blank">known limitations</a>');
+          this.domRoot.find('#langDisplayDiv').html('C (gcc 4.8, C11)<br/><font color="#e93f34">EXPERIMENTAL!</font> <a href="https://github.com/pythontutor-dev/pythontutor/blob/master/unsupported-features.md#c-and-c-unsupported-features" target="_blank">known limitations</a>');
         }
       } else if (lang === 'cpp') {
         if (this.owner.params.embeddedMode) {
           this.domRoot.find('#langDisplayDiv').html('C++ (gcc 4.8, C++11)');
         } else {
-          this.domRoot.find('#langDisplayDiv').html('C++ (gcc 4.8, C++11)<br/><font color="#e93f34">EXPERIMENTAL!</font> <a href="https://github.com/pgbovine/OnlinePythonTutor/blob/master/unsupported-features.md#c-and-c-unsupported-features" target="_blank">known limitations</a>');
+          this.domRoot.find('#langDisplayDiv').html('C++ (gcc 4.8, C++11)<br/><font color="#e93f34">EXPERIMENTAL!</font> <a href="https://github.com/pythontutor-dev/pythontutor/blob/master/unsupported-features.md#c-and-c-unsupported-features" target="_blank">known limitations</a>');
         }
       } else {
         this.domRoot.find('#langDisplayDiv').hide();
